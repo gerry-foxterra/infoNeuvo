@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Foxterra Metadata Admin</title>
+  <meta name="description" content="GISinitiatives offers innovative GIS solutions for broad range of clients across many industries" />
+  <meta name="keywords" content="GIS, spatial, GIS experts, spatial data integration" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/adminstyle.css" />
+
+</head>
+
+<body>
+
+<div id="site_content">
+  <div id="sitescontent">
+		<div id="login" class="login">
+      <form id="loginform">
+        <span id="loginHdr">Foxterra login</span>
+				<input type="text" placeholder="username" name="username" id="username"><br>
+				<input type="password" placeholder="password" id="password" name="password"><br>
+				<input type="button" value="Login" onclick="javascript:doLogin()">
+				<input type="text" placeholder="" id="loginMsg"><br>
+      </form>
+		</div>
+  </div>
+</div>
+
+<div id="footer">
+<footer>
+      <p><a href="http://www.foxterra.com">website foxterra</a> | <a href="javascript:logout()">logout</a></p>
+    </footer>
+</div>
+  <!-- javascript at the bottom for fast page loading -->
+  <script type="text/javascript" src="../scripts/jquery.min.js"></script>
+  <script type="text/javascript" src="../scripts/util.js"></script>
+  <script type="text/javascript" src="../scripts/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+/* Styles for Foxterra the map pilot
+   Full width for interface 1170px   */
+input[type=checkbox]
+{
+  -webkit-appearance:checkbox;
+}
+.hidden {
+  display: none;
+}
+#header {
+  height: 0px;
+}
+#foxterra {
+  margin: auto;
+  position: relative;
+  height: 660px;
+  width: 1000px;
+}
+.waiting {
+  position: absolute;
+  left: 45%;
+  top: 45%;
+  z-index: 9999;
+}
+#waiting {
+  display: none;
+}
+.wrapper {
+    background: #6289A7;
+    padding: 9px 10px 8px 10px;
+    border-style: solid;
+    border-color: #123456;
+    border-width: 1px;
+}
+.bHdrs {
+    font-size: 14px;
+    color: #777;
+    background: #F1F1F1;
+}
+.tableHdr {
+    width: 100%;
+    position: relative;
+    background-color: #F1F1F1;
+    height: 20px;
+    cursor: move;
+}
+
+.warning {
+  font-weight: bold;
+  padding: 8px 0px 8px 20px;
+  color: white;
+}
+#confirmMsg {
+    color: white;
+    font-weight: bold;
+    position: relative;
+    left: 18px;
+    top: 9px;
+}
+.confirmBar {
+    position: relative;
+    bottom: -25px;
+    align-content: center;
+    left: 22%;
+}
+.confirmBtn {
+    padding: 1px 10px 1px 10px;
+}
+.white {
+  color: white;
+}
+#msg {
+    position: absolute;
+    left: 21px;
+    top: 239px;
+    opacity: 0.92;
+    background: #6289A7;
+    padding: 9px 0px 6px 10px;
+    border-style: solid;
+    border-color: #123456;
+    border-width: 1px;
+    z-index: 9998;
+}
+#msgClose {
+  position: absolute;
+  right: 20px;
+  top: -4px;
+  color: #79F10C;
+  text-decoration: none;
+}
+#msgContent {
+    color: #fff;
+    padding: 10px 20px 6px 6px;
+}
+/* =============================================================================
+   Map */
+#mapWrapper {
+}
+#map {
+  position: relative;
+  top: 58px;
+  height: 659px;
+  width: 768px;
+  background-color: rgba(7, 33, 47, 0.12);
+  float: left;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(7, 33, 47, 0.12);
+  border-bottom-left-radius: 5px;
+}
+#foxDiv {
+  position: absolute;
+  z-index: 10;
+  top: 65px;
+  right: 239px;
+  height: 28px;
+  width: 190px;
+  background: rgba(0, 0, 0, 0.24);
+}
+#poweredBy {
+  position: relative;
+  text-decoration: none;
+  float: right;
+  padding: 7px 32px 5px 32px;
+  color: #eee;
+  font-size: 12px;
+}
+#poweredBy:hover {
+  color: #3EDA55;
+}
+#poweredByText {
+  font-family: sans-serif;
+}
+
+/* =============================================================================
+   Map layers dialogue */
+
+#mapLayers{
+    position: absolute;
+    right: 271px;
+    width: 138px;
+    z-index: 11;
+    opacity: .6;
+}
+#layersDialogue {
+  position: relative;
+}
+#layersDialogueFooter {
+    position: relative;
+    float: right;
+    margin: -6px -10px -6px 0px;
+}
+#leftButtons {
+    position: absolute;
+    top: 125px;
+    left: 3px;
+    width: 30px;
+    padding: 10px 6px 10px 3px;
+    z-index: 1000;
+}
+.leftButton {
+    width: 31px;
+    height: 31px;
+    background: rgb(231, 240, 216);
+    background-repeat: no-repeat;
+    background-position: center;
+    border: #807C7D solid 1.5px;
+	  border-radius: 5px;
+    margin: 0 0 4px 4px;
+}
+.leftButton:hover:after {
+    position: relative;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    width: 100px;
+    border-radius: 6px;
+    top: 0px;
+    left: 42px;
+    margin-left: -5px;
+    padding: 0 4px 0 4px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+#div_earth_on {
+    background-image: url('images/earth.png');
+}
+#div_earth_on:hover {
+    background-image: url('images/earth2.png');
+}
+#div_earth_on:hover:after {
+	content: "Earth/Map";
+}
+
+#openMapTools {
+  cursor: pointer;
+  text-decoration: none;
+  color: #2A963A;
+}
+#openMapTools:hover {
+  color: #2D903C;
+}
+.dialogue{
+    margin-bottom: 1.5em;
+    background: #FFFFFF;
+    padding: 10px 24px 10px 10px;
+    border-width: 1px 2px 2px 0;
+    border-color: #888;
+    border-style: solid;
+}
+.close{
+    position: absolute;
+    right: 30px;
+    top: 4px;
+    color: #FFFFFF;
+    font-size: 14px;
+    text-decoration: none;
+}
+.close:hover{
+  font-weight: bold;
+}
+
+.chkBox{
+  width: 8px;
+}
+.sliding {
+    background: url(images/openClose.gif) no-repeat;
+    cursor: pointer;
+    padding: 0px 0px 8px 24px;
+    background-position-y: 4px;
+    margin-left: 4px;
+    color: #4C4C4C;
+    font-weight: bold;
+}
+.chkLine{
+  color: #353534;
+  width: 100%;
+  opacity: 1.0;
+  padding-left: 10px;
+}
+.inputLine{
+  color: #353534;
+  width: 100%;
+  opacity: 1.0;
+  padding-left: 10px;
+  padding-top:10px;
+}
+.btnLine {
+  color: #353534;
+  opacity: 1.0;
+  padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.featureDD {
+    position: relative;
+    display: inline-block;
+}
+.layerSpace {
+    position: relative;
+    left: 38px;
+    margin-right: 52px;
+}
+.inline {
+    float: left;
+    margin-left: 27px;
+    margin-top: 4px;
+    margin-right: 15px;
+}
+.newLine {
+  position: relative;
+  padding-top: 14px;
+}
+.radioLine {
+  opacity: 1.0;
+  padding-left: 10px;
+  padding-top: 4px;
+}
+label.radioBox {
+  float: left;
+  padding: 0px 4px 0px 4px;
+}
+#div_streetview_select {
+  position: relative;
+  left: -22px;
+  top: 2px;
+}
+#findAdr {
+  position: relative;
+  left: 60px;
+}
+#bufferOn {
+    position: relative;
+    float: left;
+}
+#clearSel {
+  position: relative;
+  left: 15px;
+}
+#exportJSON {
+  position: relative;
+  left: 15px;
+}
+#clearLayer {
+  position: relative;
+  left: 44px;
+}
+#findOff {
+}
+.draggable {
+  cursor: move;
+}
+hr.mnu {
+    height: 5px;
+    border: 0;
+    margin: 12px 0px 6px 20px;
+    box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
+    margin: 12px 0 6px 20px;
+}
+
+#mlHeader {
+  background: #4885B3;
+  position: relative;
+  width: 100%;
+  height: 24px;
+  left: -7px;
+  top: -4px;
+  width: 105%;
+  cursor: move;
+}
+#layersDialogue {
+  position: relative;
+}
+#imgEnlarged{
+  position: absolute;
+  top: 300px;
+  cursor: move;
+}
+.imgWrapper{
+  margin: 40px 10px 10px 10px;
+  border-style: groove;
+  background: #385776;
+  padding: 30px 10px 10px 10px;
+}
+#imgTitle{
+  position: absolute;
+  left: 40px;
+  top: 2px;
+  font-size: 18px;
+  text-decoration: none;
+  font: 170% 'Yanone Kaffeesatz',helvetica,arial,verdana,sans;
+  text-shadow: 1px 1px #000;
+  color: #FFF;
+}
+.imgClose{
+    position: absolute;
+    right: 30px;
+    top: 8px;
+    color: #eee;
+    font-size: 14px;
+    text-decoration: none;
+}
+.imgClose:hover{
+  font-weight: bold;
+  color: #fff;
+}
+/* Comment out for Leaflet
+input[type=checkbox]:not(old),
+input[type=radio   ]:not(old){
+  float   : left;
+  width   : 28px;
+  margin  : 0;
+  padding : 0;
+  opacity : 0;
+}
+
+input[type=checkbox]:not(old) + label,
+input[type=radio   ]:not(old) + label{
+  display      : inline-block;
+  margin-left  : -28px;
+  padding-left : 28px;
+  background   : url('images/checks.png') no-repeat 0 0;
+  line-height  : 24px;
+}
+
+input[type=checkbox]:not(old):checked + label{
+  background-position : 0 -24px;
+}
+
+input[type=radio]:not(old):checked + label{
+  background-position : 0 -48px;
+}
+   Commented out for Leaflet end block
+*/
+/* =============================================================================
+   Right side data grid */
+#right-side {
+  position: relative;
+  float: right;
+  width: 232px;
+  height: 718px;
+  background-color: #605555;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+#dataPlaceHolder {
+  max-height: 658px;
+  overflow: auto;
+  position: relative;
+  top: 8px;
+  padding-left: 4px;
+}
+.dGrid {
+    position: relative;
+    margin-top: 9px;
+    float:left;
+    height: 100%;
+}
+.dGridSelected {
+    width: 194px;
+    margin-top: 9px;
+    float: left;
+    background: #363c2d;
+    border: 2px black solid;
+    padding-bottom: 4px;
+}
+
+.rtImage {
+    float: left;
+    height: 80px;
+    width: 80px;
+    padding: 4px;
+}
+a.rtTitle {
+    position: relative;
+    padding-left: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 18px;
+    color: #8adb95;
+    font-family: "Ariel", Calibri, sans-serif;
+    cursor: pointer;
+}
+a.rtTitle:hover {
+    color: #3EDA55;
+}
+.spanTtl {
+    padding: 0 0 2px 0;
+}
+.rtText {
+    position: relative;
+    font-size: 0.74em;
+    line-height: 100%;
+    color: #eee;
+    padding-left: 20px;
+    font-family: "Ariel", Calibri, sans-serif;
+}
+#newIcon {
+    position: absolute;
+    left: 162px;
+    height: 48px;
+    width: 48px;
+    padding-top: 11px;
+    padding-left: 5px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #e8164f;
+    background: url(images/newGreen.png) no-repeat 0 0;
+}
+
+.brochureLink {
+    position: relative;
+    left: -4px;
+    font-size: 0.88em;
+    font-weight: bold;
+    line-height: 1.5em;
+    color: #eee;
+    text-decoration: none;
+    border: #aaa solid 1px;
+    padding: 0px 4px 0px 4px;
+}
+.brochureLink:hover {
+    color: #3EDA55;
+}
+#brMenuLink {
+    color: #333;
+}
+#brMenuLink:hover {
+    color: #3EDA55;
+}
+#searchDiv {
+  position: relative;
+  padding-top: 4px;
+  width: 100%;
+}
+#searchLabel {
+    width: 100%;
+    float: left;
+    color: white;
+    font-size: 15px;
+    text-align: center;
+    font-family: "Ariel", Calibri, sans-serif;
+}
+#searchInput {
+  position: relative;
+  padding: 1px 0px 0px 10px;
+}
+#searchVal {
+    width: 168px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    margin-right: 2px;
+}
+#searchBtn {
+    background-image: url(images/magnifier.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-left: 24px;
+    border-radius: 6px;
+}
+.siteBtn {
+    border-top: 1px solid #a19a9a;
+    background: #a19a9a;
+    background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+    background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+    background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+    background: -o-linear-gradient(top, #3e779d, #65a9d7);
+    padding: 2px 12px;
+    -moz-border-radius: 6px;
+    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+    box-shadow: rgba(0,0,0,1) 0 1px 0;
+    text-shadow: rgba(0,0,0,.4) 0 1px 0;
+    color: white;
+    font-size: 14px;
+    font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+    text-decoration: none;
+}
+#searchBtn:hover {
+  border-color: #3EDA55;
+}

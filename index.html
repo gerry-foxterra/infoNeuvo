@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<title>InfoNeuvo - Map Pilot</title>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' type='text/css' />
+<link rel="stylesheet" href="css/foxterra.css" />
+<link rel="stylesheet" href="css/leaflet.css" />
+<link rel="stylesheet" href="css/jquery-ui.css" />
+
+<script src="scripts/leaflet.js"></script>
+<script src="scripts/leaflet-bing-layer.js"></script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/jquery-ui.min.js"></script>
+<script src="scripts/util.js"></script>
+<script src="scripts/jdv.js"></script>
+<script src="scripts/jdv_leaflet.js"></script>
+<script src="scripts/layersDialogue_leaflet.js"></script>
+<script src="scripts/glp.js"></script>
+<script>
+/*
+*/
+</script>
+</head>
+<body class="desktop">
+  <div id="wrapper">
+    <div id="header">
+      <div class="header-top">
+        <div class="row">
+        </div> <!-- .row -->
+      </div> <!-- .header-top -->
+      <div class="header-bottom group">
+      </div> <!-- .header-bottom -->
+    </div> <!-- #header -->
+<!-- Foxterra content -->
+    <div id="topFilters" class="dropdowns">
+    </div>
+    <div id="foxterra">
+      <div id="mapWrapper">
+        <div id="foxDiv">
+          <a id="poweredBy" href="http://www.foxterra.com" target="_blank">
+          <span id="poweredByText">Powered by Foxterra</span></a>
+        </div>
+        <div id="map">
+        </div>
+        <div id="leftButtons">
+          <div id="div_earth_on" class="leftButton" onclick="jdv_toggleLayer('bing_aerial')"></div>
+        </div>
+      </div>
+      <div id="right-side">
+        <div id="searchDiv">
+          <div id="searchLabel">Find an Address</div><br />
+          <div id="searchInput">
+            <input id="searchVal" />
+            <a id="searchBtn" class="siteBtn" href="javascript:findAddress('searchVal')"> &nbsp; </a>
+          </div>
+        </div>
+        <div id="dataPlaceHolder">
+        </div>
+      </div>
+      <div id="waiting"><img class='waiting' src='images/loading.gif' width='90' height='80'></div>
+      <div id="msg" style="display: none">
+        <a id="msgClose" href="javascript:msgClose()">close</a>
+        <div id="msgContent"></div>
+     </div>
+    </div> <!-- foxterra -->
+  </div> <!-- wrapper -->
+  <div id="tableContainer" class="tableContainer" style="display:none">
+    <a class="collapse" href="javascript:collapseDialogue('#tableContainer')">
+    <img id="collapseImg" src="images/collapse.png" height="18" width="18"></a>
+    <a class="closer" href="javascript:closeDialogue('#tableContainer','#collapseImg',true)">Close</a>
+    <div id="tableWrapper">
+      <table id="loadedTable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+    </div>
+  </div>
+  <div id="expandContainer" style="display:none">
+    <div id="expander" onclick="expandDialogue('#tableContainer')"></div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready( loadAll );
+  </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+/*** input form based styles ***/
+body
+{
+  margin-left: 0px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  background-color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #333333;
+}
+th {
+  font-weight: normal;
+}
+.outerdiv
+{
+  position:absolute;
+  left:50%;
+}
+#outerGrid {
+}
+#outerdiv {
+  display: none;
+  position: absolute;
+  z-index: 11;
+}
+.innerdiv
+{
+  position: relative;
+  overflow: visible;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  padding-bottom: 20px;
+  text-align: left;
+  top: 20px;
+  background-color: #282C3B;
+  margin-top: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333333;
+}
+#griddiv {
+  width: 1200px;
+  left: -600px;
+}
+#innerdiv {
+  width: 900px;
+  left: -411px;
+  top: 0px;
+  border: 3px solid gray;
+}
+.header
+{
+  position: relative;
+  float: left;
+  top: 0px;
+  left: 0px;
+  height: 132px;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
+  background: #282C3B;
+  border-bottom-color: #c85530;
+  background-image: url("images/adminLogo.png");
+  background-repeat: no-repeat;
+  background-position: 40px 20px;
+}
+#formHeader {
+  width: 900px;
+  cursor: move;
+}
+#gridHeader {
+  width: 1200px;
+}
+
+.btnBar {
+    position: relative;
+    float: left;
+    width: 700px;
+    height: 30px;
+    background: #282C3B;
+    border-style: solid;
+    border-width: 0px 0px 2px 0px;
+    border-color: white;
+    padding-left: 200px;
+}
+#theForm {
+  position: relative;
+  left: 14px;
+  padding-top: 14px;
+}
+#fetch {
+  left: -22px;
+}
+.btn {
+  position: relative;
+  width: 78px;
+  margin: 4px 0 5px 5px;
+  cursor: pointer;
+}
+.tableBtn {
+  margin: 0 0 0 5px;
+  cursor: pointer;
+}
+.f_label {
+    color: #ddd;
+    padding-top: 5px;
+    font-size: 13px;
+}
+.f_input {
+  color: #333;
+}
+.iSmall {
+  width: 80px;
+  color: #333;
+}
+.iMedium {
+  width: 300px;
+  color: #333;
+}
+.iLarge {
+  width: 600px;
+  color: #333;
+}
+.hidden {
+  display: none;
+}
+#msg {
+    position: absolute;
+    left: 21px;
+    top: 239px;
+    width: 190px;
+    opacity: 0.84;
+    background: #C9D6E5;
+    padding: 6px 0px 6px 10px;
+    border-style: solid;
+    border-color: #123456;
+    border-width: 1px;
+    z-index: 12;
+}
+#msgClose {
+    position: relative;
+    left: 154px;
+    top: -4px;
+    color: #79F10C;
+    text-decoration: none;
+}
+#msgContent {
+    color: #fff;
+    padding: 4px 20px 6px 6px;
+}
+#confirm {
+    top: 240px;
+    left: 63px;
+    height: 124px;
+}
+#confirmMulti {
+    top: 220px;
+    left: 43px;
+    height: 124px;
+}
+.confirm {
+    position: absolute;
+    background: #282C3B;
+    border-width: 2px;
+    border-color: black;
+    border-style: outset;
+    z-index: 13;
+}
+#confirmMsg {
+}
+#confirmMultiMsg {
+}
+.confirmMsg {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 20px 8px 20px;
+    position: relative;
+    background: #282C3B;
+    height: 17px;
+    width: 90%;
+    color: white;
+}
+.confirmBar {
+    top: 27px;
+    left: 90px;
+    position: relative;
+}
+.confirmBtn {
+  padding: 4px 6px 4px 6px;
+}
+#tr_userID {
+  display: none;
+}
+#tr_authCode {
+  display: none;
+}
+#tr_metadata {
+  display: none;
+}
+#tr_uploadThumb {
+  display: none;
+}
+#tr_uploadImage {
+  display: none;
+}
+#imageUpload {
+  position: absolute;
+  bottom: -10px;
+  left: -45px;
+}
+#uploadTitle {
+    color: white;
+    font-size: 14px;
+    position: relative;
+    top: 21px;
+    left: 2px;
+    padding: 4px 14px 4px 20px;
+    background: rgba(98, 137, 167, 0.56);
+}
+#dzClose {
+    position: relative;
+    right: -100px;
+    top: 19px;
+    color: #79F10C;
+    text-decoration: none;
+}
+.logout {
+    position: relative;
+    float: right;
+    top: 106px;
+    right: 32px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: white;
+}
+.logout:hover {
+  color: yellow;
+}
+#deleteBtn {
+    display: none;
+    position: relative;
+    top: 107px;
+    left: 40px;
+    width: 121px;
+    height: 21px;
+    border-radius: 4px;
+}
+#deleteBtn:hover {
+    cursor: pointer;
+}
+#gridWrapper {
+    color: black;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+.center {
+    text-align: center;
+}
+.centerLink {
+    text-align: center;
+    cursor: pointer;
+}
