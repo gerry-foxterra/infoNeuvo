@@ -2,14 +2,44 @@
 // Leaflet specific mapping interface
 // ===================================
 
-var gLayerCount;
+var gLayerCount = 0;
+var gSelectLayer = "";
 function createMap(mapInit, layers) {
-  var gLayerCount = 0;
+  gLayerCount = 0;
   for (var l in layers)
     gLayerCount++;
   gMap = L.map('map');
   gMap.setView([mapInit.lat, mapInit.lon], mapInit.zoom);
+  //setupSelections();
 }
+/*
+L.Polygon.include({
+  contains: function (latLng) {
+    return turf.inside(new L.Marker(latLng).toGeoJSON(), this.toGeoJSON());
+  }
+});
+
+L.Rectangle.include({
+  contains: function (latLng) {
+    return this.getBounds().contains(latLng);
+  }
+});
+
+L.Circle.include({
+  contains: function (latLng) {
+    return this.getLatLng().distanceTo(latLng) < this.getRadius();
+  }
+});
+
+
+map.on(L.Draw.Event.CREATED, function (e) {
+    markers.eachLayer(function (marker) {
+        if (!e.layer.contains(marker.getLatLng())) {
+            marker.remove();
+        }
+    });
+});
+*/
 
 function instantiateLayer(layers, layerKey) {
   // Do necessary leaflet instantiation
@@ -28,6 +58,7 @@ function instantiateLayer(layers, layerKey) {
         opacity: layer.opacity
       });
       gLayerCount--;
+      console.log("WMS, gLayerCount: " + gLayerCount);
       break;
     case "feedJSON":
       break;
@@ -76,6 +107,9 @@ function pointLayer(data, layers, layerKey) {
   layers[layerKey] = layer;
   if (layer.visible)
     ptLayer.addTo(gMap);
+  // GLP - Kluge for now to set a selectable layer
+  if (layer.select)
+    gSelectLayer = layerKey;
   return layers;
 }
 
@@ -85,6 +119,10 @@ function onEachPoint(feature, leafletLayer) {
       feature.properties.Address + "</p>";
 	}
 	leafletLayer.bindPopup(popupContent);
+}
+
+function loadingLayers() {
+  return gLayerCount > 0 ? true : false;
 }
 
 // =============================================================================

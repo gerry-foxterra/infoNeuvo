@@ -11,10 +11,13 @@ input[type=checkbox]
   height: 0px;
 }
 #foxterra {
-  margin: auto;
-  position: relative;
-  height: 660px;
-  width: 1000px;
+}
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 .waiting {
   position: absolute;
@@ -95,12 +98,16 @@ input[type=checkbox]
 /* =============================================================================
    Map */
 #mapWrapper {
+    position: relative;
+    top: 1px;
+    height: 100%;
+    width: 100%;
 }
 #map {
   position: relative;
-  top: 58px;
-  height: 659px;
-  width: 768px;
+  top: 4px;
+  height: 100%;
+  width: 100%;
   background-color: rgba(7, 33, 47, 0.12);
   float: left;
   border-bottom-style: solid;
@@ -109,13 +116,14 @@ input[type=checkbox]
   border-bottom-left-radius: 5px;
 }
 #foxDiv {
-  position: absolute;
-  z-index: 10;
-  top: 65px;
-  right: 239px;
-  height: 28px;
-  width: 190px;
-  background: rgba(0, 0, 0, 0.24);
+    position: absolute;
+    z-index: 999;
+    top: 15px;
+    right: 141px;
+    height: 28px;
+    width: 190px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.24);
 }
 #poweredBy {
   position: relative;
@@ -161,7 +169,7 @@ input[type=checkbox]
 .leftButton {
     width: 31px;
     height: 31px;
-    background: rgb(231, 240, 216);
+    background: #fff;
     background-repeat: no-repeat;
     background-position: center;
     border: #807C7D solid 1.5px;
@@ -169,6 +177,34 @@ input[type=checkbox]
     margin: 0 0 4px 4px;
 }
 .leftButton:hover:after {
+    position: relative;
+    background-color: #ff;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    width: 100px;
+    border-radius: 6px;
+    top: 0px;
+    left: 42px;
+    margin-left: -5px;
+    padding: 0 4px 0 4px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.leftButtonReveal {
+    width: 31px;
+    height: 31px;
+    background: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: #807C7D solid 1.5px;
+	  border-radius: 5px;
+    margin: 0 0 4px 4px;
+}
+/*
+.leftButtonReveal:hover:after {
     position: relative;
     background-color: #555;
     color: #fff;
@@ -184,7 +220,7 @@ input[type=checkbox]
     border-style: solid;
     border-color: #555 transparent transparent transparent;
 }
-
+*/
 #div_earth_on {
     background-image: url('images/earth.png');
 }
@@ -194,7 +230,52 @@ input[type=checkbox]
 #div_earth_on:hover:after {
 	content: "Earth/Map";
 }
-
+#div_select_on {
+    background-image: url('images/select.png');
+}
+#div_select_on:hover {
+    background-image: url('images/select2.png');
+}
+.leftButtonReveal {
+  position: relative;
+  float: left;
+}
+.horizontalBtns {
+  padding: 0 4px 0 4px;
+}
+#selectWrapper {
+  width: 200px;
+  overflow: auto;
+}
+#selectOptions {
+  position: relative;
+  display: none;
+  left: -200px;
+}
+#hideLeft {
+    background-image: url('images/hideLeft.png');
+}
+#hideLeft:hover {
+    background-image: url('images/hideLeft2.png');
+}
+#selectBox {
+    background-image: url('images/selectBox.png');
+}
+#selectBox:hover {
+    background-image: url('images/selectBox2.png');
+}
+#selectCircle {
+    background-image: url('images/selectCircle.png');
+}
+#selectCircle:hover {
+    background-image: url('images/selectCircle2.png');
+}
+#selectPolygon {
+    background-image: url('images/selectPolygon.png');
+}
+#selectPolygon:hover {
+    background-image: url('images/selectPolygon2.png');
+}
 #openMapTools {
   cursor: pointer;
   text-decoration: none;

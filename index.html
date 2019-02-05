@@ -6,10 +6,14 @@
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' type='text/css' />
 <link rel="stylesheet" href="css/foxterra.css" />
 <link rel="stylesheet" href="css/leaflet.css" />
+<link rel="stylesheet" href="css/leaflet.draw.css" />
 <link rel="stylesheet" href="css/jquery-ui.css" />
 
 <script src="scripts/leaflet.js"></script>
-<script src="scripts/leaflet-bing-layer.js"></script>
+<script src="scripts/leaflet.draw.js"></script>
+<script src="scripts/turf.min.js"></script>
+<script src="scripts/leaflet.draw.js"></script>
+<script src="scripts/leaflet-bing-layer.min.js"></script>
 <script src="scripts/jquery.min.js"></script>
 <script src="scripts/jquery-ui.min.js"></script>
 <script src="scripts/util.js"></script>
@@ -35,7 +39,7 @@
 <!-- Foxterra content -->
     <div id="topFilters" class="dropdowns">
     </div>
-    <div id="foxterra">
+    <div id="foxterra" class="fullscreen">
       <div id="mapWrapper">
         <div id="foxDiv">
           <a id="poweredBy" href="http://www.foxterra.com" target="_blank">
@@ -44,18 +48,14 @@
         <div id="map">
         </div>
         <div id="leftButtons">
-          <div id="div_earth_on" class="leftButton" onclick="jdv_toggleLayer('bing_aerial')"></div>
-        </div>
-      </div>
-      <div id="right-side">
-        <div id="searchDiv">
-          <div id="searchLabel">Find an Address</div><br />
-          <div id="searchInput">
-            <input id="searchVal" />
-            <a id="searchBtn" class="siteBtn" href="javascript:findAddress('searchVal')"> &nbsp; </a>
+          <div id="selectWrapper" onclick="selectBtnClick()">
+		        <div id="div_select_on" class="leftButtonReveal"></div>
+            <div id="selectOptions">
+              <div id="selectBox" class="leftButtonReveal horizontalBtns" onclick="selectBox()"></div>
+              <div id="selectCircle" class="leftButtonReveal horizontalBtns" onclick="selectCircle()"></div>
+              <div id="selectPolygon" class="leftButtonReveal horizontalBtns" onclick="selectPolygon()"></div>
+            </div>
           </div>
-        </div>
-        <div id="dataPlaceHolder">
         </div>
       </div>
       <div id="waiting"><img class='waiting' src='images/loading.gif' width='90' height='80'></div>

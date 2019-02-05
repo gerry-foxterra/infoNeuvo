@@ -39,8 +39,19 @@ function displayLayers(layers) {
     setVisibility(layers, layerKey)
   }
   setTimeout(function() {
+    doLayersDialogue(layers);
+  }, 200);
+}
+
+function doLayersDialogue(layers) {
+  if (!loadingLayers()) {
     layersDialogue(layers);
-  }, 1000)
+  }
+  else {
+    setTimeout(function() {
+      doLayersDialogue(layers);
+    }, 200);
+  }
 }
 
 function setVisibility(layers, layerKey) {
@@ -54,5 +65,33 @@ function setVisibility(layers, layerKey) {
   else {
     // Do  layer hidden thing
   }
+}
+/* =============================================================================
+   Map interactions
+*/
+function selectBtnClick() {
+  // Reveal out the various select options
+  var selectOpen = $("#selectOptions").css('display') == "block" ? true : false;
+  if (selectOpen) {
+    $( "#selectOptions" ).animate({
+      left: "-200px"
+    }, 1000, function() {
+      $("#selectOptions").css('display','none');
+      $("#div_select_on").css("background-image", "url('css/images/select.png')");
+    });
+    selectOpen = false;
+  }
+  else {
+    $("#selectOptions").css('display','block');
+    $( "#selectOptions" ).animate({
+      left: "0px"
+    }, 1000, function() {
+      $("#div_select_on").css("background-image", "url('css/images/hideLeft.png')");
+    });
+    selectOpen = true;
+  }
+}
+
+function selectBtnOut(what) {
 }
 
