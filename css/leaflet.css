@@ -553,8 +553,18 @@
 .leaflet-div-icon {
 	background: #fff;
 	border: 1px solid #666;
-	}
-
+}
+/* GLP - add marker */
+.leaflet-div-icon-redCircle
+{
+  background:red;
+  border:3px solid rgba(255,255,255,0.5);
+  color:blue;
+  font-weight:bold;
+  text-align:center;
+  border-radius:50%;
+  line-height:24px;
+}
 
 /* Tooltip */
 /* Base styles for the element that has a tooltip */

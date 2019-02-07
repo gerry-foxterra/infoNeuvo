@@ -3,43 +3,100 @@
 // ===================================
 
 var gLayerCount = 0;
-var gSelectLayer = "";
+var gSelectLayerKey = "";
+var gLayers;
 function createMap(mapInit, layers) {
   gLayerCount = 0;
+  gLayers = layers;
   for (var l in layers)
     gLayerCount++;
-  gMap = L.map('map');
-  gMap.setView([mapInit.lat, mapInit.lon], mapInit.zoom);
-  //setupSelections();
+  map = L.map('map');
+  map.setView([mapInit.lat, mapInit.lon], mapInit.zoom);
+  setupSelections();
 }
-/*
-L.Polygon.include({
-  contains: function (latLng) {
-    return turf.inside(new L.Marker(latLng).toGeoJSON(), this.toGeoJSON());
-  }
-});
 
-L.Rectangle.include({
-  contains: function (latLng) {
-    return this.getBounds().contains(latLng);
-  }
-});
+var drawControl;
+function setupSelections() {
+  var selectLayers = new L.FeatureGroup();
+  map.addLayer(selectLayers);
+  drawControl = new L.Control.Draw({
+      draw: {
+          marker   : false,
+          polygon  : true,
+          polyline : false,
+          rectangle: true,
+          circle   : {
+              metric: 'metric'
+          }
+      },
+      edit: {
+         featureGroup: selectLayers,
+         edit: false
+      }
+  });
+  drawControl.addTo(map);
 
-L.Circle.include({
-  contains: function (latLng) {
-    return this.getLatLng().distanceTo(latLng) < this.getRadius();
-  }
-});
+  L.Rectangle.include({
+    contains: function (latLng) {
+      return this.getBounds().contains(latLng);
+    }
+  });
 
+  L.Polygon.include({
+    contains: function (latLng) {
+      return turf.inside(new L.Marker(latLng).toGeoJSON(), this.toGeoJSON());
+    }
+  });
 
-map.on(L.Draw.Event.CREATED, function (e) {
-    markers.eachLayer(function (marker) {
-        if (!e.layer.contains(marker.getLatLng())) {
-            marker.remove();
-        }
-    });
-});
-*/
+  L.Circle.include({
+    contains: function (latLng) {
+      return this.getLatLng().distanceTo(latLng) < this.getRadius();
+    }
+  });
+
+  var redCircle = L.divIcon({className: 'leaflet-div-icon-redCircle'});
+  var defaultIcon = L.divIcon({className: 'leaflet-div-icon'});
+
+  map.on(L.Draw.Event.CREATED, function (e) {
+    if (gSelectLayerKey == "")
+      return;
+    var selectLayer = gLayers[gSelectLayerKey]
+    var leafletLayer = selectLayer.leafletLayer;
+    var marker;
+    var latLng;
+    var markerLayer = new L.layerGroup()
+    var markerCount = 0;
+    for (_layer in leafletLayer._layers) {
+      switch (selectLayer.geometry) {
+        case "point":
+          latLng = leafletLayer._layers[_layer]._latlng;
+          if (e.layer.contains(latLng)) {
+            ++markerCount;
+            marker = new L.marker(latLng, {icon: redCircle}).addTo(map);
+            marker.addTo(markerLayer);
+          }
+          break;
+        case "polygon":
+          break;
+        case "linestring":
+        case "multilinestring":
+          break;
+        default:
+          break;
+      };
+    };
+    if (markerCount)
+      markerLayer.addTo(selectLayers);
+      selectLayers.addTo(map);
+  })
+  // Remove all temporary layers when the garbage can is clicked
+  map.on('draw:deletestart', function (e) {
+  	selectLayers.eachLayer(function (oneLayer) {
+			selectLayers.removeLayer(oneLayer);
+  	});
+    map.removeLayer(selectLayers);
+  });
+}
 
 function instantiateLayer(layers, layerKey) {
   // Do necessary leaflet instantiation
@@ -58,7 +115,6 @@ function instantiateLayer(layers, layerKey) {
         opacity: layer.opacity
       });
       gLayerCount--;
-      console.log("WMS, gLayerCount: " + gLayerCount);
       break;
     case "feedJSON":
       break;
@@ -82,7 +138,7 @@ function instantiateLayer(layers, layerKey) {
     layer["leafletLayer"] = oneLayer;
     layers[layerKey] = layer;
     if (layer.visible)
-      oneLayer.addTo(gMap);
+      oneLayer.addTo(map);
     }
 }
 
@@ -106,10 +162,10 @@ function pointLayer(data, layers, layerKey) {
   layer["leafletLayer"] = ptLayer;
   layers[layerKey] = layer;
   if (layer.visible)
-    ptLayer.addTo(gMap);
+    ptLayer.addTo(map);
   // GLP - Kluge for now to set a selectable layer
   if (layer.select)
-    gSelectLayer = layerKey;
+    gSelectLayerKey = layerKey;
   return layers;
 }
 
@@ -130,18 +186,18 @@ function loadingLayers() {
 
 L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
 
-  onAdd: function (gMap) {
+  onAdd: function (map) {
     // Triggered when the layer is added to a map.
     //   Register a click listener, then do all the upstream WMS things
-    L.TileLayer.WMS.prototype.onAdd.call(this, gMap);
-    gMap.on('click', this.getFeatureInfo, this);
+    L.TileLayer.WMS.prototype.onAdd.call(this, map);
+    map.on('click', this.getFeatureInfo, this);
   },
 
-  onRemove: function (gMap) {
+  onRemove: function (map) {
     // Triggered when the layer is removed from a map.
     //   Unregister a click listener, then do all the upstream WMS things
-    L.TileLayer.WMS.prototype.onRemove.call(this, gMap);
-    gMap.off('click', this.getFeatureInfo, this);
+    L.TileLayer.WMS.prototype.onRemove.call(this, map);
+    map.off('click', this.getFeatureInfo, this);
   },
 
   getFeatureInfo: function (evt) {

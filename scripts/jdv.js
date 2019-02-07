@@ -1,17 +1,17 @@
 // Map functionality
 
 var gAccessKeys;
-var gMap;
-var gMapInit = [];
+var map;
+var mapInit = [];
 
 // Get parms for initial map setup.  This could come from a cookie or a check
 // of user location.
 function mapSetup()
 {
-  gMapInit["lat"] = 51.0;
-  gMapInit["lon"] = -114.0;
-  gMapInit["zoom"] = 11;
-  return gMapInit;
+  mapInit["lat"] = 51.0;
+  mapInit["lon"] = -114.0;
+  mapInit["zoom"] = 11;
+  return mapInit;
 }
 
 function loadMap(layers, serviceUrl) {
@@ -24,8 +24,8 @@ function loadMap(layers, serviceUrl) {
     cache: false,
     success: function(bfr) {
       gAccessKeys = JSON.parse(bfr);
-      gMapInit = mapSetup();
-      createMap(gMapInit, layers);
+      mapInit = mapSetup();
+      createMap(mapInit, layers);
       displayLayers(layers);
     },
       error: function(jqXHR, ajaxOptions, thrownError) {
@@ -46,6 +46,7 @@ function displayLayers(layers) {
 function doLayersDialogue(layers) {
   if (!loadingLayers()) {
     layersDialogue(layers);
+    addSelectability(layers);
   }
   else {
     setTimeout(function() {
