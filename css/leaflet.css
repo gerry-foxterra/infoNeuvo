@@ -1,4 +1,6 @@
 /* required styles */
+/* Modified by GLP - if this file is updated from an external repository you
+   MUST use the code blocks annotated with GLP  */
 
 .leaflet-pane,
 .leaflet-tile,
@@ -378,9 +380,22 @@
 	position: relative;
 	top: 1px;
 	}
-.leaflet-control-layers label {
+/* GLP   vvv  */
+.leaflet-control-layers-selector-rt {
+    margin-top: 2px;
+    position: relative;
+    float: right;
+}
+.foxMapSelect {
+    position: relative;
+    float: right;
+    top: 3px;
+    left: 6px;
+}
+/* GLP   ^^^  */
+leaflet-control-layers label {
 	display: block;
-	}
+}
 .leaflet-control-layers-separator {
 	height: 0;
 	border-top: 1px solid #ddd;

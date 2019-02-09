@@ -163,9 +163,6 @@ function pointLayer(data, layers, layerKey) {
   layers[layerKey] = layer;
   if (layer.visible)
     ptLayer.addTo(map);
-  // GLP - Kluge for now to set a selectable layer
-  if (layer.select)
-    gSelectLayerKey = layerKey;
   return layers;
 }
 

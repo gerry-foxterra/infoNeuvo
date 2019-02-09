@@ -4,6 +4,9 @@
 
  https://github.com/Leaflet/Leaflet.draw
  http://leafletjs.com
+
+ NOTE! This code has been modified by GLP.  You must incorporate changes annotated with
+       GLP in this file if you upgrade to a newer version of Leaflet.draw
  */
 ! function(t, e, i) {
     L.drawVersion = "0.4.9", L.Draw = {}, L.drawLocal = {
@@ -1246,6 +1249,7 @@
         _showActionsToolbar: function() {
             // GLP - Do not add buttons and flyovers when emptying garbage.
             if (this._toolbarClass === "leaflet-draw-edit") return;
+            // GLP ========================================================
             var t = this._activeMode.buttonIndex,
                 e = this._lastButtonIndex,
                 i = this._activeMode.button.offsetTop - 1;

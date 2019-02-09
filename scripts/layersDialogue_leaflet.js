@@ -5,19 +5,17 @@ function layersDialogue(layers) {
   var overlays = {}
   for (layer in layers) {
     var oneLayer = layers[layer];
-    if (layer.indexOf("Basemap") == 0)
-      baseLayers[oneLayer.text] = oneLayer.leafletLayer;
-    else
+    oneLayer.leafletLayer["selectable"] = oneLayer.select;
+    oneLayer.leafletLayer["objName"] = layer;
+    if (layer.indexOf("Basemap") != 0)
       overlays[oneLayer.text] = oneLayer.leafletLayer;
+    else
+      baseLayers[oneLayer.text] = oneLayer.leafletLayer;
   }
   L.control.layers(baseLayers, overlays).addTo(map);
-}
-
-function addSelectability(layers) {
-  for (layer in layers) {
-    var oneLayer = layers[layer];
-    if (layer.indexOf("Basemap") < 0) {
-      console.log(layer);
-    }
-  }
+  setTimeout(function() {
+    jQuery(".leaflet-control-layers-selector-rt").click(function(){
+        gSelectLayerKey = this.id;
+    });
+  }, 100);
 }
