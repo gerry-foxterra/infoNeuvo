@@ -19,9 +19,9 @@ from util import *
 
 class DataObj(object):
     def __init__(self, id=None, tableName=None, baseSql=None, populate=None, \
-                 db=None, admin=None, dbName=None, userName=None):
+                 db=None, admin=None, dbName=None, userName=None, server=None):
       if db is None:
-        self.db = Database(admin, dbName)
+        self.db = Database(admin, dbName, server)
       else:
         self.db = db
       self._id = id

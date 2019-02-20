@@ -5,6 +5,13 @@
 var gLayerCount = 0;
 var gSelectLayerKey = "";
 var gLayers;
+var foxLayer
+var leafletLayer;
+var selectLayer;
+var selectedPolygonStyle;
+var selectedIcon;
+var selectedMarkerOptions;
+
 function createMap(mapInit, layers) {
   gLayerCount = 0;
   gLayers = layers;
@@ -15,10 +22,15 @@ function createMap(mapInit, layers) {
   setupSelections();
 }
 
+// Select ======================================================================
+//
 var drawControl;
+var gSelectLayers;
+var currentlySelecting = false;
+
 function setupSelections() {
-  var selectLayers = new L.FeatureGroup();
-  map.addLayer(selectLayers);
+  gSelectLayers = new L.FeatureGroup();
+  map.addLayer(gSelectLayers);
   drawControl = new L.Control.Draw({
       draw: {
           marker   : false,
@@ -30,7 +42,7 @@ function setupSelections() {
           }
       },
       edit: {
-         featureGroup: selectLayers,
+         featureGroup: gSelectLayers,
          edit: false
       }
   });
@@ -54,29 +66,60 @@ function setupSelections() {
     }
   });
 
+  // Styling
   var redCircle = L.divIcon({className: 'leaflet-div-icon-redCircle'});
   var defaultIcon = L.divIcon({className: 'leaflet-div-icon'});
+  selectedIcon = redCircle;
+  selectedPolygonStyle =  {  // Global
+      weight: 2,
+      opacity: 1,
+      color: 'green',
+      fillOpacity: 0.2,
+      fillColor: 'yellow'
+  };
+
+  selectedMarkerOptions = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
 
   map.on(L.Draw.Event.CREATED, function (e) {
     if (gSelectLayerKey == "")
+    {
+      message("No layer currently set selectable", 5);
       return;
-    var selectLayer = gLayers[gSelectLayerKey]
-    var leafletLayer = selectLayer.leafletLayer;
-    var marker;
-    var latLng;
-    var markerLayer = new L.layerGroup()
-    var markerCount = 0;
-    for (_layer in leafletLayer._layers) {
-      switch (selectLayer.geometry) {
+    }
+    foxLayer = gLayers[gSelectLayerKey]
+    leafletLayer = foxLayer.leafletLayer;
+    selectLayer = new L.layerGroup();
+
+    if (foxLayer.format === "geoJSON") {
+      switch (foxLayer.geometry) {
         case "point":
-          latLng = leafletLayer._layers[_layer]._latlng;
-          if (e.layer.contains(latLng)) {
-            ++markerCount;
-            marker = new L.marker(latLng, {icon: redCircle}).addTo(map);
-            marker.addTo(markerLayer);
-          }
+          var marker;
+          var latLng;
+          var markerCount = 0;
+          for (_layer in leafletLayer._layers) {
+            latLng = leafletLayer._layers[_layer]._latlng;
+            if (e.layer.contains(latLng)) {
+              ++markerCount;
+              marker = new L.marker(latLng, {icon: selectedIcon}).addTo(map);
+              marker.addTo(selectLayer);
+            }
+            if (markerCount > 0) {
+              selectLayer.addTo(gSelectLayers);
+              gSelectLayers.addTo(map);
+            }
+          };
           break;
         case "polygon":
+          for (_layer in leafletLayer._layers) {
+            latLng = leafletLayer._layers[_layer]._latlng;
+          }
           break;
         case "linestring":
         case "multilinestring":
@@ -84,19 +127,114 @@ function setupSelections() {
         default:
           break;
       };
-    };
-    if (markerCount)
-      markerLayer.addTo(selectLayers);
-      selectLayers.addTo(map);
+    }
+    else if (foxLayer.format == "WMS") {
+      var radius = 0.0;
+      var refPts;
+      switch (e.layerType) {
+        case "rectangle":
+          refPts = [e.layer._bounds._northEast.lng, e.layer._bounds._northEast.lat,
+                    e.layer._bounds._southWest.lng, e.layer._bounds._southWest.lat] ;
+          break;
+        case "circle":
+          refPts = [e.layer._latlng.lng, e.layer._latlng.lat];
+          radius = e.layer._mRadius;
+          break;
+        case "polygon":
+          var ln = e.layer.editing.latlngs[0][0].length;
+          refPts = new Array(ln*2+2);
+          var j = 0;
+          for (var i=0; i<ln; i++) {
+            var lngLat = e.layer.editing.latlngs[0][0][i];
+            refPts[j++] = lngLat.lng;
+            refPts[j++] = lngLat.lat;
+          }
+          refPts[j++] = refPts[0];
+          refPts[j] = refPts[1];
+          break;
+      }
+      buildGeoJsonSelectLayer(gSelectLayerKey, refPts, radius);
+    }
   })
   // Remove all temporary layers when the garbage can is clicked
   map.on('draw:deletestart', function (e) {
-  	selectLayers.eachLayer(function (oneLayer) {
-			selectLayers.removeLayer(oneLayer);
-  	});
-    map.removeLayer(selectLayers);
+    takeOutTrash();
+  });
+
+  map.on('draw:drawstart', function (e) {
+    currentlySelecting = true;
+  });
+
+  map.on('draw:drawstop', function (e) {
+    currentlySelecting = false;
+  });
+
+  map.on('layerremove', function(event) {
+    // If layer just turned off was the current select layer, set select layer to none.
+    if (event.layer.hasOwnProperty("objName")) {
+      var id = $('.leaflet-control-layers-selector-rt:checked').val();
+      if (id == gSelectLayerKey) {
+        $(".leaflet-control-layers-selector-rt").prop('checked', false);
+        gSelectLayer = '';
+      }
+    }
   });
 }
+// end setup selections
+// =============================================================================
+
+function addPointSelectLayer(geoJSON) {
+  L.geoJson(geoJSON, {
+    pointToLayer: function (feature, latlng) {
+      var marker = L.circleMarker(latlng, selectedMarkerOptions);
+      if (feature.properties && feature.properties.popup)
+        marker.bindPopup(feature.properties.popup);
+      return marker;
+    }
+  }).addTo(gSelectLayers);
+  gSelectLayers.addTo(map);
+}
+
+function addPolygonSelectLayer(geoJSON) {
+  selectLayer = new L.geoJSON(geoJSON,{
+    style: selectedPolygonStyle,
+    onEachFeature: selectFeaturePopup
+  });
+  selectLayer.addTo(gSelectLayers);
+  gSelectLayers.addTo(map);
+}
+
+function selectFeaturePopup(feature, layer) {
+  if (feature.properties && feature.properties.popup) {
+    layer.bindPopup(feature.properties.popup);
+  }
+}
+
+function buildGeoJsonSelectLayer(layerKey, refPts, radius, selectLayer) {
+  var callBack;
+  switch (gLayers[layerKey].geometry) {
+    case "point":
+      callBack = addPointSelectLayer;
+      break;
+    case "polygon":
+      callBack = addPolygonSelectLayer;
+      break;
+    default:
+      callBack = addPolygonSelectLayer;
+      break;
+  }
+  retrieveGeoJSON(layerKey, refPts, radius, callBack);
+}
+
+function takeOutTrash() {
+	gSelectLayers.eachLayer(function (oneLayer) {
+		gSelectLayers.removeLayer(oneLayer);
+	});
+  map.removeLayer(gSelectLayers)
+  waiting(false);
+}
+// =============================================================================
+// Instantiate a layer
 
 function instantiateLayer(layers, layerKey) {
   // Do necessary leaflet instantiation
@@ -112,7 +250,9 @@ function instantiateLayer(layers, layerKey) {
     case "WMS":
       oneLayer = L.tileLayer.betterWms(layer.URL, {
         layers: layer.imagerySet,
-        opacity: layer.opacity
+        opacity: layer.opacity,
+        transparent: true,
+        format: 'image/png'
       });
       gLayerCount--;
       break;
@@ -178,8 +318,14 @@ function loadingLayers() {
   return gLayerCount > 0 ? true : false;
 }
 
+function getMapExtent() {
+  var latLng = map.getBounds();
+  return [latLng[0][0], latLng[0][1], latLng[1][0], latLng[1][1]];
+}
+
 // =============================================================================
 // BetterWMS - From: http://bl.ocks.org/rclark/6908938
+// GLP - Modified
 
 L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
 
@@ -199,6 +345,8 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
 
   getFeatureInfo: function (evt) {
     // Make an AJAX request to the server and hope for the best
+    // GLP
+    if (currentlySelecting) return;
     var url = this.getFeatureInfoUrl(evt.latlng),
         showResults = L.Util.bind(this.showGetFeatureInfo, this);
     $.ajax({

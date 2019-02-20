@@ -10,10 +10,11 @@
  */
 ! function(t, e, i) {
     L.drawVersion = "0.4.9", L.Draw = {}, L.drawLocal = {
+    // GLP - Text modified in this method
         draw: {
             toolbar: {
                 actions: {
-                    title: "Cancel drawing",
+                    title: "Cancel selections",
                     text: "Cancel"
                 },
                 finish: {
@@ -26,9 +27,9 @@
                 },
                 buttons: {
                     polyline: "Draw a polyline",
-                    polygon: "Draw a polygon",
-                    rectangle: "Draw a rectangle",
-                    circle: "Draw a circle",
+                    polygon: "Select using a polygon",
+                    rectangle: "Select using a rectangle",
+                    circle: "Select using a circle",
                     marker: "Draw a marker"
                 }
             },
@@ -66,7 +67,7 @@
                 },
                 simpleshape: {
                     tooltip: {
-                        end: "Release mouse to finish drawing."
+                        end: "Release mouse to finish selection."
                     }
                 }
             }
@@ -79,7 +80,7 @@
                         text: "Save"
                     },
                     cancel: {
-                        title: "Cancel editing, discards all changes.",
+                        title: "Cancel selections",
                         text: "Cancel"
                     }
                 },

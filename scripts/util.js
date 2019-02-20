@@ -136,7 +136,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 // Popup message - requires a <div id='msg'><div id='msgContent'>
 // which is properly styled
 var msgCloseWindow = false; // Close current tab when closing message
-function message(msg, stayOpen, closeWindow)
+function message(msg, secondsOpen, closeWindow)
 {
   switch(arguments.length) {
     case 3:
@@ -145,7 +145,7 @@ function message(msg, stayOpen, closeWindow)
       closeWindow = false;
       break;
     case 1:
-      stayOpen = false;
+      secondsOpen = 5;
       closeWindow = false;
       break;
     default:
@@ -155,8 +155,7 @@ function message(msg, stayOpen, closeWindow)
   }
   $("#msgContent").html(msg);
   $("#msg").fadeIn(500);
-  if (msg.toUpperCase().indexOf("ERROR") < 0 && !stayOpen)
-    setTimeout(msgClose, 4500);
+  setTimeout(msgClose, secondsOpen*1000);
   msgCloseWindow = closeWindow;
 }
 function msgClose()

@@ -73,27 +73,30 @@ input[type=checkbox]
   color: white;
 }
 #msg {
-    position: absolute;
-    left: 21px;
-    top: 239px;
-    opacity: 0.92;
-    background: #6289A7;
-    padding: 9px 0px 6px 10px;
-    border-style: solid;
-    border-color: #123456;
-    border-width: 1px;
-    z-index: 9998;
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  opacity: 0.92;
+  background: #6289A7;
+  padding: 9px 0px 6px 10px;
+  border-style: solid;
+  border-color: #123456;
+  border-width: 1px;
+  z-index: 9998;
 }
 #msgClose {
-  position: absolute;
+  position: relative;
+  float: right;
   right: 20px;
   top: -4px;
   color: #79F10C;
   text-decoration: none;
 }
 #msgContent {
-    color: #fff;
-    padding: 10px 20px 6px 6px;
+  position: relative;
+  color: #fff;
+  float: left;
+  padding: 18px 0px 7px 5px;
 }
 /* =============================================================================
    Map */

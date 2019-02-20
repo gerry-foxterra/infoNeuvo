@@ -58,13 +58,14 @@ function loadObjects() {
 
 function waiting(on) {
   if ( on ) {
-    waitCount++;
-    $("#waiting").slideDown(0.5);
+    if (++waitCount == 1)
+      $("#waiting").slideDown(0.5);
   }
   else {
-    waitCount--;
-    if (!waitCount)
+    if (--waitCount < 1) {
       $("#waiting").hide(0.2);
+      waitCount = 0;
+    }
   }
 }
 
@@ -128,75 +129,6 @@ function closeDialogue(theID) {
 var processingGeoJSON = false;
 var jsonBfr = "";
 var jsonlayerID;
-
-function retrieveGeoJSON(layerID, hiliteMode, refPts, radius, extra)
-{
-  // If 4 pts in 'refPts', select features by a bounding rectangle.  If 2 pts, select
-  // features by a center point and radius.  If greater than 4 pts, select
-  // using a polygon. If 0 points, select the from the map extent.
-  //
-  // hiliteMode: 'hilite' - draw features to user select layer
-  //             'redraw' - draw features to user layer
-  //             'reuse'  - use last retrieve 'jsonBfr' if redrawing same layer
-  //             'both'   - draw features to user and select layer
-
-  // Don't allow this AJAX retrieve method to have more than one current retrieval.
-  if (processingGeoJSON) return;
-
-  waiting(true);
-  if (arguments.length <= 4)
-    extra = '';
-  if (arguments.length <= 3)
-    radius = 0.0;
-  if (arguments.length <= 2 || refPts.length < 1)
-    refPts = glpExtent;
-  if (arguments.length <= 1)
-    hiliteMode = 'hilite';
-  if (refPts.length < 1)
-    refPts = [0.0];
-
-  if (hiliteMode == "reuse" && layerID == jsonLayerID) {
-    jdv_update_layerID_with_new_json_string(layerID, jsonBfr);
-    waiting(false);
-    return;
-  }
-
-  var hilite = "/both/hilite".indexOf(hiliteMode) > 0 ? true : false;
-  var redraw = "/both/redraw".indexOf(hiliteMode) > 0 ? true : false;
-  jsonLayerID = layerID;
-
-  var htmlContent = "";
-  var theUrl = serviceUrl("retrieveJSON_", layerID);
-  var formValues = $("#filterForm").serialize();
-  $.ajax(
-  {
-    url: theUrl,
-    data: {_refPts: JSON.stringify(refPts), _radius: JSON.stringify(radius),
-           _form: JSON.stringify(formValues), _extra: JSON.stringify(extra)},
-    dataType: 'json',
-    type: 'GET',
-    cache: false,
-    success: function(bfr) {
-      if (hilite) {
-          jdv_populate_selection(layerID, bfr, false);  // this layer is drawn (highlighted) to
-      }                                                 // to the user draw layer
-      if (redraw) {
-        jdv_layerChanged(layerID, true);                // this layer is drawn to its own layer
-        jdv_update_layerID_with_new_json_string(layerID, bfr);
-      }
-      jsonBfr = bfr;
-      waiting(false);
-      selectOff();
-      processingGeoJSON = false;
-      return;
-    },
-    error: function (jqXHR, ajaxOptions, thrownError) {
-      console.log(thrownError);
-      processingGeoJSON = false;
-      waiting(false);
-    }
-  });
-}
 
 // ============================== etc =========================================
 // Opens AND closes the datagrid table

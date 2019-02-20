@@ -517,15 +517,20 @@ class Feature(DataObj):
   PUBLIC method. Called by classes that have a 'feature' that wants to generate
   geometry JSON for use by a mapping application
   """
-  def encodeJSON(self, returnGeom=True):
+  def encodeJSON(self, obj=None):
     comma = ''
     bfr = '{"type":"Feature","properties":{'
     for key, value in self.properties.iteritems():
       bfr += comma + '"' + key + '":' + str(utilFormat(value))
       comma = ','
+    # If the parent object is passed, include all elements in the obj._order list
+    if obj is not None:
+      for key in obj._order:
+        val = obj.rgetattr(obj, key)
+        bfr += comma + '"' + key + '":' + str(utilFormat(val))
+        comma = ','
     bfr = bfr + '}'
-    if returnGeom:
-      bfr += ',' + self.geometry.encodeJSON()
+    bfr += ',' + self.geometry.encodeJSON()
     return bfr + '}'
 
   def geomFromVertices(self, vertices):

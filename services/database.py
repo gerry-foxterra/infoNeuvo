@@ -21,7 +21,7 @@ class Database(object):
     # parameters appropriately.
 
     # Connect to the appropriate database
-    def __init__(self, admin=False, dbName=None):
+    def __init__(self, admin=False, dbName=None, server=None):
         g = GlobalVars()
         self.errorLevel = 0
         self.errorMsg = ""
@@ -38,6 +38,8 @@ class Database(object):
         _db = g.database
         if dbName is not None:
           _db = dbName
+        if server is not None:
+          _host = server
         try:
             if _host is None:
               self.db = psycopg2.connect(user=_user, password=_pswd, database=_db)

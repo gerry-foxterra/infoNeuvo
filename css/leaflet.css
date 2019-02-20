@@ -382,15 +382,44 @@
 	}
 /* GLP   vvv  */
 .leaflet-control-layers-selector-rt {
-    margin-top: 2px;
-    position: relative;
-    float: right;
+  margin-top: 2px;
+  position: relative;
+  float: right;
 }
 .foxMapSelect {
-    position: relative;
-    float: right;
-    top: 3px;
-    left: 6px;
+  margin: 2px 8px 0 0;
+  position: relative;
+  float: right;
+}
+span.openGroup {
+  background: url(images/openClose.png) no-repeat;
+  background-position: left -3px;
+  cursor: pointer;
+  padding-left: 22px;
+}
+span.inGroup {
+}
+span.noGroup {
+}
+span.closeSpan {
+  background: url(images/openClose.png) no-repeat;
+  background-position: left -33px;
+  cursor: pointer;
+  padding-left: 22px;
+}
+.leaflet-control-layers-overlays {
+  width: 110%;
+}
+div.openGroup {
+  padding: 0px 0px 0px 4px;
+}
+div.inGroup {
+  padding: 0px 0px 0px 4px;
+}
+div.noGroup {
+}
+.leaflet-control-layers-overlays {
+  width: 110%;
 }
 /* GLP   ^^^  */
 leaflet-control-layers label {

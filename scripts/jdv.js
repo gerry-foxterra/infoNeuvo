@@ -2,6 +2,7 @@
 
 var gAccessKeys;
 var map;
+var gExtent;  // current map extent (rectangle)
 var mapInit = [];
 
 // Get parms for initial map setup.  This could come from a cookie or a check
@@ -46,7 +47,6 @@ function displayLayers(layers) {
 function doLayersDialogue(layers) {
   if (!loadingLayers()) {
     layersDialogue(layers);
-    addSelectability(layers);
   }
   else {
     setTimeout(function() {
@@ -55,44 +55,68 @@ function doLayersDialogue(layers) {
   }
 }
 
+var processingGeoJSON = false;
+var jsonBfr = "";
+var jsonlayerID;
+
+function retrieveGeoJSON(layerKey, refPts, radius, callBack) {
+  // If 4 pts in 'refPts', select features by a bounding rectangle.  If 2 pts, select
+  // features by a center point and radius.  If greater than 4 pts, select
+  // using a polygon. If 0 points, select the from the map extent.
+
+  // Don't allow this AJAX retrieve method to have more than one current retrieval.
+  if (processingGeoJSON) return;
+
+  waiting(true);
+  if (arguments.length <= 3)
+    callBack = false;
+  if (arguments.length <= 2)
+    radius = 0.0;
+  if (arguments.length <= 1 || refPts.length < 1)
+    refPts = getMapExtent();
+  if (refPts.length < 1)
+    refPts = [0.0];
+
+  var layerID = layerKey.split(':')[1];
+  //var surrogate = gLayers[layerKey].surrogate;
+  //if (surrogate != "") layerID = surrogateLayer(surrogate);
+  jsonLayerID = layerID;
+
+  var htmlContent = "";
+  var theUrl = serviceUrl + "geoJSON_" + layerID + ".py";
+  var formValues = $("#filterForm").serialize();
+  $.ajax(
+  {
+      url: theUrl,
+      data: {_refPts: JSON.stringify(refPts), _radius: JSON.stringify(radius),
+             _form: JSON.stringify(formValues)},
+      dataType: 'json',
+      type: 'GET',
+      cache: false,
+      success: function(bfr) {
+        jsonBfr = bfr;
+        if (!callBack)
+          return bfr.geoJSON;
+        else
+          callBack(bfr.geoJSON);
+        waiting(false);
+      },
+      error: function (jqXHR, ajaxOptions, thrownError) {
+          console.log(thrownError);
+          processingGeoJSON = false;
+          waiting(false);
+          return false;
+      }
+  });
+}
+
 function setVisibility(layers, layerKey) {
   if (!layers[layerKey].hasOwnProperty("instantiated")) {
     instantiateLayer(layers, layerKey);
     return;
   }
-  if (layer.visible) {
-    // Do  layer visible thing
-  }
-  else {
-    // Do  layer hidden thing
-  }
 }
 /* =============================================================================
    Map interactions
 */
-function selectBtnClick() {
-  // Reveal out the various select options
-  var selectOpen = $("#selectOptions").css('display') == "block" ? true : false;
-  if (selectOpen) {
-    $( "#selectOptions" ).animate({
-      left: "-200px"
-    }, 1000, function() {
-      $("#selectOptions").css('display','none');
-      $("#div_select_on").css("background-image", "url('css/images/select.png')");
-    });
-    selectOpen = false;
-  }
-  else {
-    $("#selectOptions").css('display','block');
-    $( "#selectOptions" ).animate({
-      left: "0px"
-    }, 1000, function() {
-      $("#div_select_on").css("background-image", "url('css/images/hideLeft.png')");
-    });
-    selectOpen = true;
-  }
-}
-
-function selectBtnOut(what) {
-}
 

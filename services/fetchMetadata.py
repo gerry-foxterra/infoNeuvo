@@ -60,6 +60,7 @@ if isValid:
   delim = ''
   l = LayerInfo()
   l.sqlFilters("uniqueid>0")
+  l.sqlOrderBy("sortid")
   more = l.fetchNext()
   while more:
     if l.metadata["owner"] == "" or l.metadata["owner"] in u.rightsTo:

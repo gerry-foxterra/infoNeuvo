@@ -15,6 +15,8 @@
   var o = {
     version: "1.0.3"
   };
+  // GLP
+  var currentGroup = "";
   "object" == typeof module && "object" == typeof module.exports ? module.exports = o : "function" == typeof define && define.amd && define(o), "undefined" != typeof t && n(), o.Util = {
       extend: function(t) {
         var e, i, n, o;
@@ -4388,18 +4390,36 @@
       return o.innerHTML = n, o.firstChild
     },
     _addItem: function(t) {
-      var i, n = e.createElement("label"),
+      // GLP - this event heavily reworked
+      //       adding collapsable layer groups and radio button for 'select layer'
+      var group = t.layer.objName.split(':')[0];
+      var openGroup = false;
+      var lblID = "lbl:" + t.layer.objName;
+      var lblClass = group == "Basemap" ? "noGroup" : "foxgroup inGroup";
+      if (group != currentGroup && currentGroup != "") {
+        lblClass = "foxgroup openGroup";
+        openGroup = true;
+      }
+      currentGroup = group;
+      var i, n = e.createElement("div"),
         s = this._map.hasLayer(t.layer);
-      t.overlay ? (i = e.createElement("input"), i.type = "checkbox", i.className = "leaflet-control-layers-selector", i.defaultChecked = s) : i = this._createRadioElement("leaflet-base-layers", s), i.layerId = o.stamp(t.layer), o.DomEvent.on(i, "click", this._onInputClick, this);
+      // GLP
+      n.id = lblID, n.className = lblClass;
+      if (openGroup) {
+        spn = e.createElement("span"), spn.id = "spn:"+group, spn.className = lblClass, spn.innerHTML = group;
+        n.appendChild(spn);
+      }
+      var inputID = "chk:" + t.layer.objName;
+      t.overlay ? (i = e.createElement("input"), i.type = "checkbox", i.id = inputID, i.className = "leaflet-control-layers-selector", i.defaultChecked = s) : i = this._createRadioElement("leaflet-base-layers", s), i.layerId = o.stamp(t.layer), o.DomEvent.on(i, "click", this._onInputClick, this);
       var r = e.createElement("span");
       r.innerHTML = " " + t.name;
       var a = e.createElement("div");
+      // a.className = lblClass;
       n.appendChild(a), a.appendChild(i), a.appendChild(r);
       // GLP - if selectable add <div> and insert radio input control.
       if (t.layer.selectable) {
-        z = e.createElement("div"), z.className="foxMapSelect";//, z.id='~'+t.layer.objName;
-        var inputInsert =
-        z.innerHTML = "<input type='radio' class='leaflet-control-layers-selector-rt' name='leaflet-select-layers' id='" + t.layer.objName + "' title='Set as select layer'>";
+        z = e.createElement("div"), z.className="foxMapSelect";
+        z.innerHTML = "<input type='radio' class='leaflet-control-layers-selector-rt' name='leaflet-select-layers' id='" + t.layer.objName + "' value='" + t.layer.objName + "' title='Set as select layer'>";
         a.appendChild(z);
       }
       var h = t.overlay ? this._overlaysList : this._baseLayersList;
@@ -4418,8 +4438,7 @@
       this._handlingClick = !1, this._refocusOnMap()
     },
     _checkDisabledLayers: function() {
-      // GLP - If we getElementsByClassName we will get our inserted radio selects which are not associated with a layer on/off
-      // for (var t, e, n = this._form.getElementsByTagName("input"), o = this._map.getZoom(), s = n.length - 1; s >= 0; s--) t = n[s], e = this._getLayer(t.layerId).layer, t.disabled = e.options.minZoom !== i && o < e.options.minZoom || e.options.maxZoom !== i && o > e.options.maxZoom
+      // GLP - same changes as _onInputClick
       for (var t, e, n = this._form.getElementsByClassName("leaflet-control-layers-selector"), o = this._map.getZoom(), s = n.length - 1; s >= 0; s--) t = n[s], e = this._getLayer(t.layerId).layer, t.disabled = e.options.minZoom !== i && o < e.options.minZoom || e.options.maxZoom !== i && o > e.options.maxZoom
     },
     _expand: function() {
