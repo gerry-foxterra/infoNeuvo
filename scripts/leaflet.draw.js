@@ -1538,9 +1538,15 @@
         },
         addHooks: function() {
             var t = this._map;
-            t && (t.getContainer().focus(), this._deletableLayers.eachLayer(this._enableLayerDelete, this), this._deletedLayers = new L.LayerGroup, this._tooltip = new L.Draw.Tooltip(this._map), this._tooltip.updateContent({
-                text: L.drawLocal.edit.handlers.remove.tooltip.text
-            }), this._map.on("mousemove", this._onMouseMove, this))
+            var ttText = null;
+            // GLP - added conditional code
+            try {
+              t && (t.getContainer().focus(), this._deletableLayers.eachLayer(this._enableLayerDelete, this), this._deletedLayers = new L.LayerGroup, this._tooltip = new L.Draw.Tooltip(this._map), this._tooltip.updateContent({
+                  text: L.drawLocal.edit.handlers.remove.tooltip.text
+              }), this._map.on("mousemove", this._onMouseMove, this))
+            }
+            catch(err) {
+              ; }
         },
         removeHooks: function() {
             this._map && (this._deletableLayers.eachLayer(this._disableLayerDelete, this), this._deletedLayers = null, this._tooltip.dispose(), this._tooltip = null, this._map.off("mousemove", this._onMouseMove, this))

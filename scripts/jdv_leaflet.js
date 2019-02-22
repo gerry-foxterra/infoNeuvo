@@ -7,10 +7,6 @@ var gSelectLayerKey = "";
 var gLayers;
 var foxLayer
 var leafletLayer;
-var selectLayer, drawLayer;
-var selectedPolygonStyle;
-var selectedIcon;
-var selectedMarkerOptions;
 var gLayerKey;
 
 function createMap(mapInit, layers) {
@@ -29,6 +25,10 @@ function createMap(mapInit, layers) {
 var drawControl;
 var gSelectLayers, gDrawLayers;
 var currentlySelecting = false;
+var selectLayer, drawLayer;
+var selectedPolygonStyle;
+var selectedIcon;
+var selectedMarkerOptions;
 
 function setupSelections() {
   gSelectLayers = new L.FeatureGroup();
@@ -173,6 +173,8 @@ function setupSelections() {
 
   map.on('draw:drawstop', function (e) {
     currentlySelecting = false;
+    if (gSelectLayerKey == "")
+      return;
     drawLayer.addTo(gDrawLayers);
     gDrawLayers.addTo(map);
   });
