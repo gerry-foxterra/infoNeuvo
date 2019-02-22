@@ -7,7 +7,7 @@ var gSelectLayerKey = "";
 var gLayers;
 var foxLayer
 var leafletLayer;
-var selectLayer;
+var selectLayer, drawLayer;
 var selectedPolygonStyle;
 var selectedIcon;
 var selectedMarkerOptions;
@@ -27,11 +27,12 @@ function createMap(mapInit, layers) {
 // Select ======================================================================
 //
 var drawControl;
-var gSelectLayers;
+var gSelectLayers, gDrawLayers;
 var currentlySelecting = false;
 
 function setupSelections() {
   gSelectLayers = new L.FeatureGroup();
+  gDrawLayers = new L.FeatureGroup();
   map.addLayer(gSelectLayers);
   drawControl = new L.Control.Draw({
       draw: {
@@ -98,6 +99,8 @@ function setupSelections() {
     foxLayer = gLayers[gSelectLayerKey]
     leafletLayer = foxLayer.leafletLayer;
     selectLayer = new L.layerGroup();
+    drawLayer = new L.layerGroup();
+    e.layer.addTo(drawLayer);
 
     if (foxLayer.format === "geoJSON") {
       switch (foxLayer.geometry) {
@@ -170,6 +173,8 @@ function setupSelections() {
 
   map.on('draw:drawstop', function (e) {
     currentlySelecting = false;
+    drawLayer.addTo(gDrawLayers);
+    gDrawLayers.addTo(map);
   });
 
   map.on('layerremove', function(event) {
@@ -236,6 +241,10 @@ function takeOutTrash() {
 		gSelectLayers.removeLayer(oneLayer);
 	});
   map.removeLayer(gSelectLayers)
+	gDrawLayers.eachLayer(function (oneLayer) {
+		gDrawLayers.removeLayer(oneLayer);
+	});
+  map.removeLayer(gDrawLayers);
   waiting(false);
 }
 // end selection utilities
