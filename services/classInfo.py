@@ -159,12 +159,12 @@ class LayerInfo(ClassInfoData):
 
     # Metadata for grid retrieval and display
     self._defaults = {'type':'dynamic', 'format':'WMS', 'minZoom':0, 'maxZoom':9999999, 'text':'Unknown', \
-                     'URL':'', 'open':False, 'owner':'', 'cssClass':'selectLine', \
+                     'URL':'', 'pop_up':'','open':False, 'owner':'', 'cssClass':'selectLine', \
                      'visible':False, 'select':False, 'legend':'', 'heatMap':False, 'geometry':'point', \
                      'image':'', 'zindex':'', 'filters':False, 'source':'', 'locale':'', 'color':[0,0,0,1.0], \
                      'imagerySet':'','attribution':'','opacity':1.0}
     self._format = {'type':'str', 'id': 'str', 'format':'str', 'minZoom':'int', 'maxZoom':'int', 'text':'str', \
-                     'URL':'str', 'open':'bool', 'group':'str', 'owner':'str', 'cssClass':'str', \
+                     'URL':'str', 'pop_up':'str', 'open':'bool', 'group':'str', 'owner':'str', 'cssClass':'str', \
                      'visible':'bool', 'select':'bool', 'legend':'str', 'heatMap':'bool', 'geometry':'str', \
                      'image':'str', 'zindex':'int', 'filters':'bool', 'source':'str', 'locale':'str', 'color':'int[]', \
                      'imagerySet':'str','opacity':'int'}

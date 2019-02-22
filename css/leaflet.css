@@ -591,6 +591,20 @@ leaflet-control-layers label {
 	border: 1px solid #999;
 	}
 
+/* GLP */
+.pTbl {
+  border: 1px #cccccc solid;
+  padding: 4px;
+}
+.pTr0 {
+  font-weight: bold;
+}
+.pTr {
+}
+.pTdL { vertical-align: top;
+}
+.pTdR { padding: 2px 4px 2px 2px;
+}
 
 /* div icon */
 

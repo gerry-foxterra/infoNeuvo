@@ -3,11 +3,16 @@
 function layersDialogue(layers) {
   var baseLayers = {};
   var overlays = {}
-  for (layer in layers) {
-    var oneLayer = layers[layer];
+  var wmsMap = {};
+  for (layerKey in layers) {
+    var oneLayer = layers[layerKey];
     oneLayer.leafletLayer["selectable"] = oneLayer.select;
-    oneLayer.leafletLayer["objName"] = layer;
-    if (layer.indexOf("Basemap") != 0)
+    oneLayer.leafletLayer["objName"] = layerKey;
+    if (oneLayer.format == "WMS" && oneLayer.imagerySet != "") {
+      var setParts = oneLayer.imagerySet.split(':');
+      wmsMap[setParts.length == 2 ? setParts[1] : setParts[0]] = layerKey;
+    }
+    if (layerKey.indexOf("Basemap") != 0)
       overlays[oneLayer.text] = oneLayer.leafletLayer;
     else
       baseLayers[oneLayer.text] = oneLayer.leafletLayer;
@@ -27,6 +32,7 @@ function layersDialogue(layers) {
     });
     initializeGroups()
   }, 100);
+  return wmsMap;
 }
 
 function openCloseGroup(what) {

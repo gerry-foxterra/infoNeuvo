@@ -3,6 +3,7 @@
 var gAccessKeys;
 var map;
 var gExtent;  // current map extent (rectangle)
+var gWmsMap;
 var mapInit = [];
 
 // Get parms for initial map setup.  This could come from a cookie or a check
@@ -46,7 +47,7 @@ function displayLayers(layers) {
 
 function doLayersDialogue(layers) {
   if (!loadingLayers()) {
-    layersDialogue(layers);
+    gWmsMap = layersDialogue(layers);
   }
   else {
     setTimeout(function() {
@@ -116,6 +117,7 @@ function setVisibility(layers, layerKey) {
     return;
   }
 }
+
 /* =============================================================================
    Map interactions
 */

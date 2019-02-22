@@ -11,6 +11,7 @@ var selectLayer;
 var selectedPolygonStyle;
 var selectedIcon;
 var selectedMarkerOptions;
+var gLayerKey;
 
 function createMap(mapInit, layers) {
   gLayerCount = 0;
@@ -20,6 +21,7 @@ function createMap(mapInit, layers) {
   map = L.map('map');
   map.setView([mapInit.lat, mapInit.lon], mapInit.zoom);
   setupSelections();
+  $('.leaflet-container').css('cursor','default');
 }
 
 // Select ======================================================================
@@ -107,7 +109,8 @@ function setupSelections() {
             latLng = leafletLayer._layers[_layer]._latlng;
             if (e.layer.contains(latLng)) {
               ++markerCount;
-              marker = new L.marker(latLng, {icon: selectedIcon}).addTo(map);
+              marker = new L.marker(latLng, {icon: selectedIcon}); //.addTo(map);
+              marker.bindPopup(leafletLayer._layers[_layer]._popup);
               marker.addTo(selectLayer);
             }
             if (markerCount > 0) {
@@ -182,7 +185,9 @@ function setupSelections() {
 }
 // end setup selections
 // =============================================================================
+// Selection utilities
 
+// geoJSON returned from server as a select overlay
 function addPointSelectLayer(geoJSON) {
   L.geoJson(geoJSON, {
     pointToLayer: function (feature, latlng) {
@@ -233,6 +238,7 @@ function takeOutTrash() {
   map.removeLayer(gSelectLayers)
   waiting(false);
 }
+// end selection utilities
 // =============================================================================
 // Instantiate a layer
 
@@ -282,8 +288,10 @@ function instantiateLayer(layers, layerKey) {
     }
 }
 
+// geoJSON points
 function pointLayer(data, layers, layerKey) {
   var layer = layers[layerKey];
+  gLayerKey = layerKey;
   var oneIcon = L.icon({
     iconUrl: layer.image,
     iconSize: [12,12],
@@ -293,7 +301,9 @@ function pointLayer(data, layers, layerKey) {
   });
 	var ptLayer = L.geoJSON(data, {
 		pointToLayer: function (feature, latlng) {
-			return L.marker(latlng, {icon: oneIcon});
+			var oneMarker = L.marker(latlng, {icon: oneIcon});
+      oneMarker["objName"] = layerKey;
+      return oneMarker;
 		},
 		onEachFeature: onEachPoint,
   });
@@ -308,10 +318,10 @@ function pointLayer(data, layers, layerKey) {
 
 function onEachPoint(feature, leafletLayer) {
 	if (feature.properties) {
-		var popupContent = "<p>" + feature.properties.Title + "<br>" +
-      feature.properties.Address + "</p>";
+    var bfr = buildFeaturePopup(feature);
+    if ( bfr )
+	   leafletLayer.bindPopup(bfr);
 	}
-	leafletLayer.bindPopup(popupContent);
 }
 
 function loadingLayers() {
@@ -321,6 +331,21 @@ function loadingLayers() {
 function getMapExtent() {
   var latLng = map.getBounds();
   return [latLng[0][0], latLng[0][1], latLng[1][0], latLng[1][1]];
+}
+
+function buildFeaturePopup(feature) {
+    var elList = gLayers[gLayerKey].pop_up;
+    if (elList.length < 2) return false;
+    var elements = elList.split(',');
+    var bfr = "<table class='pTbl'><tr class='pTr0'><td class='pTd0' colspan='2'>" + feature.properties[elements[0]] +
+      "</td></tr>";
+    for (var i=1; i<elements.length; i++) {
+      var parts = elements[i].split(':');    // element is name:description or simply name
+      var desc = parts.length == 1 ? elements[i] : parts[1];
+      bfr += "<tr class='pTr'><td class='pTdL'>" + desc + "</td>" +
+             "<td class='pTdR'>" + feature.properties[parts[0]] + "</td></tr>";
+    }
+    return bfr += "</table>";
 }
 
 // =============================================================================
@@ -344,7 +369,6 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
   },
 
   getFeatureInfo: function (evt) {
-    // Make an AJAX request to the server and hope for the best
     // GLP
     if (currentlySelecting) return;
     var url = this.getFeatureInfoUrl(evt.latlng),
@@ -352,7 +376,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     $.ajax({
       url: url,
       success: function (data, status, xhr) {
-        var err = typeof data === 'string' ? null : data;
+        var err = typeof data === 'object' ? null : data;
         showResults(err, evt.latlng, data);
       },
       error: function (xhr, status, error) {
@@ -379,7 +403,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
           width: size.x,
           layers: this.wmsParams.layers,
           query_layers: this.wmsParams.layers,
-          info_format: 'text/html'
+          info_format: 'application/json'       //GLP - We can process the JSON
         };
 
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
@@ -389,12 +413,18 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
   },
 
   showGetFeatureInfo: function (err, latlng, content) {
-    if (err) { console.log(err); return; } // do nothing if there's an error
+    // GLP - New formatting, using json object
+    if (err) return; // do nothing if there's an error
+    if (!content.features) return;
+    if (content.features.length < 1) return;
+    var leafletID = content.features[0].id.split('.')[0];
+    gLayerKey = gWmsMap[leafletID];
+    var bfr = buildFeaturePopup(content.features[0]);
+    if ( !bfr ) return;
 
-    // Otherwise show the content in a popup, or something.
     L.popup({ maxWidth: 800})
       .setLatLng(latlng)
-      .setContent(content)
+      .setContent(bfr)
       .openOn(this._map);
   }
 });
