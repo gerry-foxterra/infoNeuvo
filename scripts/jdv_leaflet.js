@@ -29,14 +29,16 @@ var selectLayer, drawLayer;
 var selectedPolygonStyle;
 var selectedIcon;
 var selectedMarkerOptions;
+var gMarkerLatLng;
 
 function setupSelections() {
   gSelectLayers = new L.FeatureGroup();
   gDrawLayers = new L.FeatureGroup();
+
   map.addLayer(gSelectLayers);
   drawControl = new L.Control.Draw({
       draw: {
-          marker   : false,
+          marker   : true,
           polygon  : true,
           polyline : false,
           rectangle: true,
@@ -66,6 +68,12 @@ function setupSelections() {
   L.Circle.include({
     contains: function (latLng) {
       return this.getLatLng().distanceTo(latLng) < this.getRadius();
+    }
+  });
+
+  L.Marker.include({
+    contains: function (latLng) {
+      return this.getLatLng().distanceTo(latLng) < 5000;
     }
   });
 
@@ -101,6 +109,10 @@ function setupSelections() {
     selectLayer = new L.layerGroup();
     drawLayer = new L.layerGroup();
     e.layer.addTo(drawLayer);
+    if (e.layerType == "marker") {
+      gMarkerLatLng = e.layer.getLatLng();
+      // return;
+    }
 
     if (foxLayer.format === "geoJSON") {
       switch (foxLayer.geometry) {
@@ -158,6 +170,10 @@ function setupSelections() {
           refPts[j++] = refPts[0];
           refPts[j] = refPts[1];
           break;
+        case "marker":
+          refPts = [gMarkerLatLng.lng, gMarkerLatLng.lat];
+          radius = 5000;
+          break;
       }
       buildGeoJsonSelectLayer(gSelectLayerKey, refPts, radius);
     }
@@ -175,6 +191,9 @@ function setupSelections() {
     currentlySelecting = false;
     if (gSelectLayerKey == "")
       return;
+    if (e.layerType == 'marker') {
+      bullsEye(gMarkerLatLng);
+    }
     drawLayer.addTo(gDrawLayers);
     gDrawLayers.addTo(map);
   });
@@ -220,6 +239,12 @@ function selectFeaturePopup(feature, layer) {
   if (feature.properties && feature.properties.popup) {
     layer.bindPopup(feature.properties.popup);
   }
+}
+
+function bullsEye(latLng) {
+  L.circle([latLng.lat, latLng.lng], {radius: 1000}).addTo(drawLayer);
+  L.circle([latLng.lat, latLng.lng], {radius: 2500}).addTo(drawLayer);
+  L.circle([latLng.lat, latLng.lng], {radius: 5000}).addTo(drawLayer);
 }
 
 function buildGeoJsonSelectLayer(layerKey, refPts, radius, selectLayer) {

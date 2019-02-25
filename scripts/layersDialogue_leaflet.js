@@ -31,6 +31,13 @@ function layersDialogue(layers) {
       openCloseGroup(this);
     });
     initializeGroups()
+    map.on({
+      overlayremove: function(e) {
+        if (e.layer.objName === gSelectLayerKey) {
+          gSelectLayerKey = "";
+        }
+      }
+    });
   }, 100);
   return wmsMap;
 }

@@ -623,7 +623,16 @@ leaflet-control-layers label {
   border-radius:50%;
   line-height:24px;
 }
-
+.leaflet-div-icon-bullsEye
+{
+  background:blue;
+  border:1px solid rgba(255,255,255,0.5);
+  color:blue;
+  font-weight:bold;
+  text-align:center;
+  border-radius:50%;
+  line-height:12px;
+}
 /* Tooltip */
 /* Base styles for the element that has a tooltip */
 .leaflet-tooltip {

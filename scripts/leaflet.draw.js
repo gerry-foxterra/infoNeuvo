@@ -5,10 +5,19 @@
  https://github.com/Leaflet/Leaflet.draw
  http://leafletjs.com
 
- NOTE! This code has been modified by GLP.  You must incorporate changes annotated with
-       GLP in this file if you upgrade to a newer version of Leaflet.draw
+ NOTE! This code has been modified by GLP to use Leaflet.draw as a selection tool.
+       You must incorporate changes annotated with GLP in this file if you upgrade
+       to a newer version of Leaflet.draw
  */
 ! function(t, e, i) {
+    // GLP
+    var bullsEyeIcon =  new L.icon({
+      iconUrl: "css/images/bullsEyeCircle.png",
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [-12, -12]
+    });
+
     L.drawVersion = "0.4.9", L.Draw = {}, L.drawLocal = {
     // GLP - Text modified in this method
         draw: {
@@ -30,7 +39,7 @@
                     polygon: "Select using a polygon",
                     rectangle: "Select using a rectangle",
                     circle: "Select using a circle",
-                    marker: "Draw a marker"
+                    marker: "Bullseye selector"
                 }
             },
             handlers: {
@@ -42,7 +51,7 @@
                 },
                 marker: {
                     tooltip: {
-                        start: "Click map to place marker."
+                        start: "Click map to create bullseye."
                     }
                 },
                 polygon: {
@@ -538,8 +547,8 @@
         statics: {
             TYPE: "marker"
         },
-        options: {
-            icon: new L.Icon.Default,
+        options: {  // GLP
+            icon: bullsEyeIcon, //L.Icon.Default,
             repeatMode: !1,
             zIndexOffset: 2e3
         },
