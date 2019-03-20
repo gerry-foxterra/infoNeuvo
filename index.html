@@ -7,12 +7,15 @@
 <link rel="stylesheet" href="css/foxterra.css" />
 <link rel="stylesheet" href="css/leaflet.css" />
 <link rel="stylesheet" href="css/leaflet.draw.css" />
+<link rel="stylesheet" href="css/leaflet-ruler.css" />
 <link rel="stylesheet" href="css/jquery-ui.css" />
 
 <script src="scripts/leaflet.js"></script>
 <script src="scripts/turf.min.js"></script>
 <script src="scripts/leaflet.draw.js"></script>
-<script src="scripts/leaflet-bing-layer.min.js"></script>
+<script src="scripts/leaflet-bing-layer.js"></script>
+<script src="scripts/esri-leaflet.js"></script>
+<script src="scripts/leaflet-ruler.js"></script>
 <script src="scripts/jquery.min.js"></script>
 <script src="scripts/jquery-ui.min.js"></script>
 <script src="scripts/util.js"></script>
@@ -43,12 +46,10 @@
         </div>
         <div id="map">
         </div>
-        <div id="leftButtons">
-        </div>
       </div>
       <div id="waiting"><img class='waiting' src='images/loading.gif' width='90' height='80'></div>
       <div id="msg" style="display: none">
-        <a id="msgClose" href="javascript:msgClose()">close</a>
+        <a id="msgClose" href="javascript:msgClose()"> X </a>
         <div id="msgContent"></div>
      </div>
     </div> <!-- foxterra -->
@@ -64,6 +65,7 @@
   <div id="expandContainer" style="display:none">
     <div id="expander" onclick="expandDialogue('#tableContainer')"></div>
   </div>
+  <div id="reportContainer" style="display:none"></div>
   <script type="text/javascript">
     $(document).ready( loadAll );
   </script>

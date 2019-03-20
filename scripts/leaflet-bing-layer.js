@@ -77,11 +77,13 @@ L.TileLayer.Bing = L.TileLayer.extend({
     METADATA_URL: 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?key={bingMapsKey}&include=ImageryProviders&uriScheme=https',
     POINT_METADATA_URL: 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}/{lat},{lng}?zl={z}&key={bingMapsKey}&uriScheme=https'
   },
-
-  initialize: function (options) {
-    if (typeof options === 'string') {
-      options = { bingMapsKey: options }
+  // JDV - Changed for Bing fuck-up (added imgSet)
+  initialize: function (options, imgSet) {
+    if (typeof options === 'string' && typeof imgSet === 'string') {
+      options = { bingMapsKey: options,  imagerySet: imgSet}
     }
+
+
     if (options && options.BingMapsKey) {
       options.bingMapsKey = options.BingMapsKey
       console.warn('use options.bingMapsKey instead of options.BingMapsKey')
@@ -89,6 +91,7 @@ L.TileLayer.Bing = L.TileLayer.extend({
     if (!options || !options.bingMapsKey) {
       throw new Error('Must supply options.BingMapsKey')
     }
+	
     options = L.setOptions(this, options)
     if (VALID_IMAGERY_SETS.indexOf(options.imagerySet) < 0) {
       throw new Error("'" + options.imagerySet + "' is an invalid imagerySet, see https://github.com/digidem/leaflet-bing-layer#parameters")
@@ -270,9 +273,11 @@ L.TileLayer.Bing = L.TileLayer.extend({
   }
 })
 
-L.tileLayer.bing = function (options) {
-  return new L.TileLayer.Bing(options)
+// JDV - Changed for Bing fuck-up
+L.tileLayer.bing = function (options, imgSet) {
+  return new L.TileLayer.Bing(options,imgSet)
 }
+// JDV - End change for Bing fuck-up
 
 module.exports = L.TileLayer.Bing
 

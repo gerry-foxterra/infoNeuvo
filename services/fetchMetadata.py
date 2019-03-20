@@ -27,8 +27,8 @@ logging.info("Start " + timeNow + " =====================================")
 # password - if present used to validate the user with 'username'.  If 'password'
 #            is not present, only 'username' is validated
 #
-parms = cgi.FieldStorage()
-#parms = {"_username":"glp"}
+#parms = cgi.FieldStorage()
+parms = {"_username":"glp"}
 authCode = None
 username = None
 password = None
@@ -40,8 +40,8 @@ if "_authCode" in parms:
   logging.info("authCode: " + authCode)
   isValid = u.isAuthorized(authCode)
 elif "_username" in parms:
-  username = json.loads(parms["_username"].value)
-  #username = "glp"
+  #username = json.loads(parms["_username"].value)
+  username = "glp"
   logging.info("username: " + username)
   if "_password" in parms:
     logging.info("Password supplied")
@@ -60,6 +60,7 @@ if isValid:
   delim = ''
   l = LayerInfo()
   l.sqlFilters("uniqueid>0")
+  l.filterIsPublished("Y")
   l.sqlOrderBy("sortid")
   more = l.fetchNext()
   while more:
@@ -70,12 +71,16 @@ if isValid:
 
   delim = ''
   r = ReportInfo()
-  more = r.fetchNext()
-  while more:
-    if r.metadata["owner"] == "" or r.metadata["owner"] in u.rightsTo:
-      jsonReports += delim + r.encodeJSON()
+  i = 0
+  for report in r.reports:
+    if r.reports[report]['owner'] == "" or r.reports[report]['owner'] in u.rightsTo:
+      j = json.dumps(r.reports[report])
+      loaded_j = str(json.loads(j))
+      loaded_j = loaded_j.replace("u'", '"')
+      loaded_j = loaded_j.replace("'", '"')
+      jsonReports += delim + '"' + report + '":' + loaded_j
       delim = ','
-    more = r.fetchNext()
+      i += 1
 
   print utilJsonContentType()
   print '[{"status":"VALID"},'

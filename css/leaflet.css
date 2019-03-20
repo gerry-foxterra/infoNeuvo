@@ -499,6 +499,19 @@ leaflet-control-layers label {
 	background-clip: padding-box;
 	}
 
+/* reports - GLP */
+#reportMenu {
+  float: right;
+  border: solid #ccc 2px;
+  background: white;
+  border-radius: 8px;
+  padding: 4px 8px 4px 2px;
+  position: relative;
+  right: 8px;
+  top: 67px;
+  z-index: 9999;
+  display: none;
+}
 
 /* popup */
 

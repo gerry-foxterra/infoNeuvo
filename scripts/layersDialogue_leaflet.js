@@ -1,9 +1,10 @@
 // Build a layers dialogue using leaflet methods
 //
-function layersDialogue(layers) {
+function layersDialogue(layers, reports) {
   var baseLayers = {};
   var overlays = {}
   var wmsMap = {};
+
   for (layerKey in layers) {
     var oneLayer = layers[layerKey];
     oneLayer.leafletLayer["selectable"] = oneLayer.select;
@@ -20,12 +21,15 @@ function layersDialogue(layers) {
   L.control.layers(baseLayers, overlays, {collapsed:true}).addTo(map);
   setTimeout(function() {
     jQuery(".leaflet-control-layers-selector-rt").click(function(){
-      gSelectLayerKey = this.id;
-      if (!map.hasLayer(layers[gSelectLayerKey].leafletLayer)) {
+      gSelectLayerKey = this.id == "Placeholder:noSelections" ? "" : this.id;
+      if (gSelectLayerKey != "" && !map.hasLayer(layers[gSelectLayerKey].leafletLayer)) {
         $("#msg").css({top: "15%", left: "82%"});
         message("You must turn the layer on before<br> making it the current select layer");
         $(".leaflet-control-layers-selector-rt").prop('checked', false);
       }
+    });
+    jQuery(".leaflet-draw-edit-remove").click(function() {
+      takeOutTrash();
     });
     jQuery("span.openGroup").click(function(){
       openCloseGroup(this);
@@ -38,6 +42,7 @@ function layersDialogue(layers) {
         }
       }
     });
+    setupReports(reports);
   }, 100);
   return wmsMap;
 }
@@ -68,7 +73,8 @@ function initializeGroups() {
         isOpened[group] = true;
     }
     else
-      isOpened[group] = isChecked;
+      if (group != "Placeholder")
+        isOpened[group] = isChecked;
     i += 1;
   });
   for (key in isOpened) {

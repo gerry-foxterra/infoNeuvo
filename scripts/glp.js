@@ -13,6 +13,7 @@ var userObj = {};
 var userID = 0;
 var authCode = "";
 var g_obj = "";
+var currentFormValues = "";
 
 function loadAll() {
   var isMobile = false;
@@ -41,7 +42,7 @@ function loadObjects() {
     success: function(bfr) {
       g_obj = eval(bfr);
       if (g_obj[0].status == "VALID") {
-        loadMap(g_obj[1].layers, serviceUrl);
+        loadMap(g_obj[1].layers, g_obj[2].reports, serviceUrl);
       }
       else {
         message("Unable to load map");
@@ -56,6 +57,42 @@ function loadObjects() {
   });
 }
 
+function doReport(reportKey, selectMode, refPts, radius) {
+  waiting(true);
+  var htmlContent = "";
+  var theUrl = serviceUrl + g_obj[2].reports[reportKey].service;
+
+  $.ajax(
+  {
+      url: theUrl,
+      data: {_geography: JSON.stringify(selectMode), _refPts:JSON.stringify(refPts),
+             _radius: JSON.stringify(radius), _form: JSON.stringify(currentFormValues),
+             _authCode: JSON.stringify(authCode)},
+      dataType: 'html',
+      type: 'POST',
+      cache: false,
+      success: function(bfr) {
+        $("#reportContainer").html(bfr);
+        openReportInNewWindow('landscape');
+        waiting(false);
+      },
+      error: function (jqXHR, ajaxOptions, thrownError) {
+        console.log(jqXHR.responseText);
+        waiting(false);
+      }
+  });
+}
+
+function openReportInNewWindow(orientation) {
+  var width = 695;
+  var height = 860
+  if ( orientation == 'landscape' ) {
+    height = 695;
+    width = 940;
+  }
+  var wInfoRep = window.open("reportEnvelope.html", "_blank",
+      "toolbar=no, scrollbars=yes,resizable=yes, width=" + width + ", height=" + height + ", top=100, left=100'");
+}
 function waiting(on) {
   if ( on ) {
     if (++waitCount == 1)

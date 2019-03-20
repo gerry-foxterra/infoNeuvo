@@ -73,23 +73,27 @@ input[type=checkbox]
   color: white;
 }
 #msg {
+  font-family: sans-serif;
+  font-size: 13px;
   position: absolute;
   left: 50%;
   top: 44%;
   opacity: 0.92;
-  background: #6289A7;
+  background: #aaac;
   padding: 9px 0px 6px 10px;
   border-style: solid;
-  border-color: #123456;
-  border-width: 1px;
+  border-color: #ccc;
+  border-width: 2px;
+  border-radius: 6px;
   z-index: 9998;
 }
 #msgClose {
+  font-weight: bold;
   position: relative;
   float: right;
   right: 20px;
   top: -4px;
-  color: #79F10C;
+  color: #555;
   text-decoration: none;
 }
 #msgContent {

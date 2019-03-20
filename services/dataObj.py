@@ -366,15 +366,20 @@ class DataObj(object):
       result = self.feature.fractionIntersectPolygon(refPoints, nPts)
       return self.returnFraction(result)
 
-    def fractionIntersectList(self, gidList, gidColumnName=None):
+    def fractionIntersectPolygon(self, refPoints, nPts=None):
       self.applyFilters()
-      result = self.feature.fractionIntersectList(gidList, gidColumnName)
+      result = self.feature.fractionIntersectPolygon(refPoints, nPts)
+      return self.returnFraction(result)
+
+    def fractionIntersectText(self, textGeom, nPts=None):
+      self.applyFilters()
+      result = self.feature.fractionIntersectText(textGeom, nPts)
       return self.returnFraction(result)
 
     def returnFraction(self, result):
       if result:
         self.populate(result)
-        frac = dNone(result[self._lastIndex+1])
+        frac = DNone(result[self._lastIndex+1])
         self._intersectFraction = frac
         return True
       return False

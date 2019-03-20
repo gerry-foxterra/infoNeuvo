@@ -35,7 +35,7 @@ class GlobalVars:
             self.password = "gis1sCool"
             self.admin = "gisuser"
             self.adminPassword = "gisUser"
-            self.imageFileDirectory = 'http://realestate.resolutefox.com/infoNeuvo/services/'
+            self.imageFileDirectory = 'https://realestate.resolutefox.com/infoNeuvo/services/'
 
     def Print(self):
         print self.fqdn

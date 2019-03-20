@@ -73,6 +73,9 @@ if o.appName != dataObj["appName"]:
 if o.sortID != dataObj["sortID"]:
   if o.update(uniqueID, "sortid", dataObj["sortID"]):
     count += 1
+if o.published != dataObj["published"]:
+  if o.update(uniqueID, "published", dataObj["published"]):
+    count += 1
 
 msg = " fields updated"
 if count == 1:

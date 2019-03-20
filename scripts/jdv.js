@@ -16,7 +16,7 @@ function mapSetup()
   return mapInit;
 }
 
-function loadMap(layers, serviceUrl) {
+function loadMap(layers, reports, serviceUrl) {
   var fullUrl = serviceUrl + "accessKeys.py";
   $.ajax({
     url: fullUrl,
@@ -28,7 +28,7 @@ function loadMap(layers, serviceUrl) {
       gAccessKeys = JSON.parse(bfr);
       mapInit = mapSetup();
       createMap(mapInit, layers);
-      displayLayers(layers);
+      displayLayers(layers, reports);
     },
       error: function(jqXHR, ajaxOptions, thrownError) {
         console.log(thrownError);
@@ -36,22 +36,22 @@ function loadMap(layers, serviceUrl) {
   });
 }
 
-function displayLayers(layers) {
+function displayLayers(layers, reports) {
   for (var layerKey in layers) {
     setVisibility(layers, layerKey)
   }
   setTimeout(function() {
-    doLayersDialogue(layers);
+    doLayersDialogue(layers, reports);
   }, 200);
 }
 
-function doLayersDialogue(layers) {
+function doLayersDialogue(layers, reports) {
   if (!loadingLayers()) {
-    gWmsMap = layersDialogue(layers);
+    gWmsMap = layersDialogue(layers, reports);
   }
   else {
     setTimeout(function() {
-      doLayersDialogue(layers);
+      doLayersDialogue(layers, reports);
     }, 200);
   }
 }

@@ -4,6 +4,7 @@
 
 var gLayerCount = 0;
 var gSelectLayerKey = "";
+var gCurrentReportKey = "";
 var gLayers;
 var foxLayer
 var leafletLayer;
@@ -18,6 +19,55 @@ function createMap(mapInit, layers) {
   map.setView([mapInit.lat, mapInit.lon], mapInit.zoom);
   setupSelections();
   $('.leaflet-container').css('cursor','default');
+}
+
+var hideTime;
+function setupReports(reports) {
+  var bfr = '<div id="reportMenu"><form id="reportForm">';
+  bfr += '<div><input type="radio" name="leaflet-reports"' +
+    ' id="noReport" value="" onchange="changeReport(this)" checked="checked"><span> ' +
+    'No report selected</span></div><div class="leaflet-control-layers-separator"></div>'
+  for (report in reports) {
+    var oneReport = reports[report];
+    bfr += '<div><input type="radio" name="leaflet-reports"' +
+      ' id="' + report + '" value="' + report + '" onchange="changeReport(this)"><span> ' +
+      oneReport.text + '</span></div>'
+  }
+  bfr += '</form></div>'
+  var reportControl = L.Control.extend({
+    options: {
+      position: 'topright'
+    },
+    onAdd: function (map) {
+      var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+      container.id = "leaflet-report-button";
+      container.style.backgroundColor = 'white';
+      container.style.backgroundImage = "url('css/images/report.png')";
+      container.style.backgroundPosition = "center";
+      container.style.backgroundRepeat = "no-repeat";
+      container.style.width = '44px';
+      container.style.height = '44px';
+      container.onmouseenter = function(){
+        $("#reportMenu").show("slide", { direction: "right" }, 100);
+        hideTime = new Date().getTime() + 400;
+      }
+      return container;
+    }
+  });
+  map.addControl(new reportControl());
+  $(bfr).insertAfter($("#leaflet-report-button").parent().get(0));
+  $("#reportMenu").bind('mouseleave', leave);
+}
+
+function leave() {
+  var tNow = new Date().getTime();
+  if (tNow > hideTime) {
+    $("#reportMenu").hide("slide", { direction: "right" }, 100);
+  }
+}
+
+function changeReport(what) {
+  gCurrentReportKey = what.id;
 }
 
 // Select ======================================================================
@@ -99,22 +149,27 @@ function setupSelections() {
   };
 
   map.on(L.Draw.Event.CREATED, function (e) {
-    if (gSelectLayerKey == "")
-    {
-      message("No layer currently set selectable", 5);
+    var reporting = gCurrentReportKey === "" ? false : true;
+    var selecting = gSelectLayerKey === "" ? false : true;
+    if (!selecting && !reporting) {
+      message("No layer or report selected", 6);
+      takeOutTrash();
       return;
     }
-    foxLayer = gLayers[gSelectLayerKey]
-    leafletLayer = foxLayer.leafletLayer;
-    selectLayer = new L.layerGroup();
+    var foxLayerFormat = "";
+    if (selecting) {
+      foxLayer = gLayers[gSelectLayerKey]
+      foxLayerFormat = foxLayer.format;
+      leafletLayer = foxLayer.leafletLayer;
+      selectLayer = new L.layerGroup();
+    }
     drawLayer = new L.layerGroup();
     e.layer.addTo(drawLayer);
     if (e.layerType == "marker") {
       gMarkerLatLng = e.layer.getLatLng();
-      // return;
     }
 
-    if (foxLayer.format === "geoJSON") {
+    if (selecting && foxLayerFormat === "geoJSON") {
       switch (foxLayer.geometry) {
         case "point":
           var marker;
@@ -124,7 +179,7 @@ function setupSelections() {
             latLng = leafletLayer._layers[_layer]._latlng;
             if (e.layer.contains(latLng)) {
               ++markerCount;
-              marker = new L.marker(latLng, {icon: selectedIcon}); //.addTo(map);
+              marker = new L.marker(latLng, {icon: selectedIcon});
               marker.bindPopup(leafletLayer._layers[_layer]._popup);
               marker.addTo(selectLayer);
             }
@@ -146,7 +201,7 @@ function setupSelections() {
           break;
       };
     }
-    else if (foxLayer.format == "WMS") {
+    if ((selecting && foxLayerFormat == "WMS") || reporting) {
       var radius = 0.0;
       var refPts;
       switch (e.layerType) {
@@ -175,12 +230,20 @@ function setupSelections() {
           radius = 5000;
           break;
       }
-      buildGeoJsonSelectLayer(gSelectLayerKey, refPts, radius);
+      if (reporting) {
+        var selectMode = e.layerType === "marker" ? "bullsEye" : e.layerType;
+        doReport(gCurrentReportKey, selectMode, refPts, radius);
+      }
+      if (selecting) {
+        buildGeoJsonSelectLayer(gSelectLayerKey, refPts, radius);
+      }
     }
-  })
+  });
   // Remove all temporary layers when the garbage can is clicked
   map.on('draw:deletestart', function (e) {
-    takeOutTrash();
+    // Added click event to button in layersDialogue_leaflet to remove draw layers
+    // which can occur when just doing reporting.
+    //takeOutTrash();
   });
 
   map.on('draw:drawstart', function (e) {
@@ -188,9 +251,11 @@ function setupSelections() {
   });
 
   map.on('draw:drawstop', function (e) {
-    currentlySelecting = false;
-    if (gSelectLayerKey == "")
+    if (typeof drawLayer == 'undefined') {
+      message("No layer or report selected", 6);
       return;
+    }
+    currentlySelecting = false;
     if (e.layerType == 'marker') {
       bullsEye(gMarkerLatLng);
     }
@@ -208,6 +273,11 @@ function setupSelections() {
       }
     }
   });
+
+  var options = {
+    position: 'bottomleft'
+  }
+  L.control.ruler(options).addTo(map);
 }
 // end setup selections
 // =============================================================================
@@ -247,7 +317,7 @@ function bullsEye(latLng) {
   L.circle([latLng.lat, latLng.lng], {radius: 5000}).addTo(drawLayer);
 }
 
-function buildGeoJsonSelectLayer(layerKey, refPts, radius, selectLayer) {
+function buildGeoJsonSelectLayer(layerKey, refPts, radius) {
   var callBack;
   switch (gLayers[layerKey].geometry) {
     case "point":
@@ -285,7 +355,7 @@ function instantiateLayer(layers, layerKey) {
   switch (layer.format) {
     case "OSM":
       if (layer.source == "BingMaps") {
-        oneLayer = L.tileLayer.bing(gAccessKeys.bing, {type: layer.imagerySet});
+        oneLayer = L.tileLayer.bing(gAccessKeys.bing, layer.imagerySet);
         gLayerCount--;
       }
       break;
@@ -308,8 +378,13 @@ function instantiateLayer(layers, layerKey) {
       }
       break;
     case "tileLayer":
-      var parms = layer.URL;
-      oneLayer = L.tileLayer(parms);
+      var parms = ;
+      if (layer.source == "ESRI") {
+        oneLayer = L.esri.tiledMapLayer({ url: layer.URL });
+      }
+      else {
+        oneLayer = L.tileLayer(layer.URL);
+      }
       gLayerCount--;
       break;
     default:

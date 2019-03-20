@@ -84,10 +84,19 @@ th {
     border-color: white;
     padding-left: 200px;
 }
+#wrapper {
+  position: relative;
+  height: 740px;
+  width: 100%;
+  display: inline-block;
+  overflow-y: auto;
+}
 #theForm {
   position: relative;
   left: 14px;
   padding-top: 14px;
+}
+#form_meta {
 }
 #fetch {
   left: -22px;

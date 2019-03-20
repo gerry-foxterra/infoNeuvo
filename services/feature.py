@@ -50,7 +50,6 @@ class Feature(DataObj):
     self._gid = "gid"
 
   """
-  PUBLIC method. Called by classes that have a 'feature'.
     This method requires the `childGeom` for the current instantiation of the
     object. This should be available as object.feature.geom after an object.fetch()
   """
@@ -76,7 +75,6 @@ class Feature(DataObj):
     return false
 
   """
-  PUBLIC method. Called by classes that have a 'feature'.
     This method requires the Point `childGeom` for the current instantiation of the
     object. This should be available as object.feature.geom after an object.fetch()
   """
@@ -91,9 +89,6 @@ class Feature(DataObj):
       return result[0];
     return false
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  """
   def closestPoints(self, refPoint, nPts=None):
     if self._firstTime:
       if nPts is not None:
@@ -124,7 +119,6 @@ class Feature(DataObj):
     return False
 
   """
-  PRIVATE method. Called by classes that have a 'feature'.
     Returns a single polygon that contains 'refPoint'
     (ST_GeomFromText('POINT(1 2)')
   """
@@ -146,7 +140,6 @@ class Feature(DataObj):
     return False
 
   """
-  PRIVATE method. Called by classes that have a 'feature'.
     Returns a single polygon that contains 'theText'
   """
   def containsText(self, theText):
@@ -166,9 +159,6 @@ class Feature(DataObj):
       return dbRow;
     return False
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  """
   def withinRadius(self, refPoint, radius, maxRtn=None):
     if self._firstTime:
       if maxRtn is not None:
@@ -194,9 +184,6 @@ class Feature(DataObj):
     super(Feature,self).sqlClear()
     return False
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  """
   def withinRectangle(self, minCorner, maxCorner, maxRtn=None):
     if (self._firstTime):
       if maxRtn is not None:
@@ -222,9 +209,6 @@ class Feature(DataObj):
     self.sqlClear()
     return False
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  """
   def withinPolygon(self, vertices, maxRtn=None):
     if (self._firstTime):
       if maxRtn is not None:
@@ -256,10 +240,6 @@ class Feature(DataObj):
     self.sqlClear()
     return False
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  Polygon method.
-  """
   # Return each feature which intersects the circle described by the refPoint
   # and radius and the fraction of the feature which is intersected.
 
@@ -293,10 +273,6 @@ class Feature(DataObj):
     super(Feature,self).sqlClear()
     return False
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  Polygon method.
-  """
   # Return each feature which intersects the rectangle described by the refPoints
   # and the fraction of the feature which is intersected.
 
@@ -316,10 +292,6 @@ class Feature(DataObj):
       refPts = []   # has been set up properly for the query.
     return self.fractionIntersectPolygon(refPts, nPts)
 
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
-  Polygon method.
-  """
   # Return each feature which intersects the polygon described by the refPoints
   # and the fraction of the feature which is intersected.
 
@@ -362,44 +334,6 @@ class Feature(DataObj):
     return False
 
   """
-  PRIVATE method. Called by classes that have a 'feature'.
-  Build the extension to SQL to return the fraction geometry which is intersected
-  by 'refPoints'
-  """
-  def sqlExtensionString(self, refPoints):
-    if len(refPoints) == 2:     # Radius
-      extension = ",ST_Area(ST_intersection(geom, ST_Buffer(ST_MakePoint(" + \
-                  str(refPoints[0]) + "," + str(refPoints[1]) + ")::geography," + \
-                  str(radius) + ")))/ST_Area(ST_Transform(geom, utmzone(ST_Centroid(geom)))) as _x"
-      return extension
-    elif len(refPoints) == 4:   # Rectangle corners, convert to polygon
-      refPts = [refPoints[0], refPoints[1], refPoints[0], refPoints[3], \
-                refPoints[2], refPoints[3], refPoints[2], refPoints[1], \
-                refPoints[0], refPoints[1]]
-    else:                       # Polygon
-      refPts = refPoints
-
-    lineString = "LINESTRING("
-    delimiter = ','
-    count = 0
-    for refPt in refPts:
-      if count > 0:
-        lineString += delimiter
-      count += 1
-      lineString += str(refPt)
-      if delimiter == ',':
-        delimiter = ' '
-      else:
-        delimiter = ','
-    lineString += ')'
-    extension = ",ST_Area(ST_intersection(ST_Transform(geom, utmzone(ST_Centroid(geom)))," + \
-                "ST_Transform(ST_MakePolygon(ST_GeomFromText('" + lineString + \
-                "', 4326)), utmzone(ST_Centroid(geom))))) /" + \
-                "ST_Area(ST_Transform(geom, utmzone(ST_Centroid(geom)))) AS _x"
-    return extension
-
-  """
-  PRIVATE method. Called by classes that have a 'feature'.
   Polygon method.
   """
   # Return each feature which intersects the polygon described by the refPoints
@@ -444,6 +378,42 @@ class Feature(DataObj):
     super(Feature,self).sqlClear()
     return False
 
+  """
+  Build the extension to SQL to return the fraction geometry which is intersected
+  by 'refPoints'. If refPoints is a string it is assumed the passed geometry is
+  formatted as ST_Text
+  """
+  def sqlExtensionString(self, refPoints):
+    if len(refPoints) == 2:     # Radius
+      extension = ",ST_Area(ST_intersection(geom, ST_Buffer(ST_MakePoint(" + \
+                  str(refPoints[0]) + "," + str(refPoints[1]) + ")::geography," + \
+                  str(radius) + ")))/ST_Area(ST_Transform(geom, utmzone(ST_Centroid(geom)))) as _x"
+      return extension
+    elif len(refPoints) == 4:   # Rectangle corners, convert to polygon
+      refPts = [refPoints[0], refPoints[1], refPoints[0], refPoints[3], \
+                refPoints[2], refPoints[3], refPoints[2], refPoints[1], \
+                refPoints[0], refPoints[1]]
+    else:                       # Polygon
+      refPts = refPoints
+
+    lineString = "LINESTRING("
+    delimiter = ','
+    count = 0
+    for refPt in refPts:
+      if count > 0:
+        lineString += delimiter
+      count += 1
+      lineString += str(refPt)
+      if delimiter == ',':
+        delimiter = ' '
+      else:
+        delimiter = ','
+    lineString += ')'
+    extension = ",ST_Area(ST_intersection(ST_Transform(geom, utmzone(ST_Centroid(geom)))," + \
+                "ST_Transform(ST_MakePolygon(ST_GeomFromText('" + lineString + \
+                "', 4326)), utmzone(ST_Centroid(geom))))) /" + \
+                "ST_Area(ST_Transform(geom, utmzone(ST_Centroid(geom)))) AS _x"
+    return extension
   """
   Set the geocode engine to either "MapQuest" or "Google"
   """
@@ -534,7 +504,8 @@ class Feature(DataObj):
     return bfr + '}'
 
   def geomFromVertices(self, vertices):
-    geomType = "POLYGON"
+    geomType = "POLYGON("
+    braces = "))"
     n = len(vertices)
     if n == 4:  # box
       v = polygonVerticesFromRectangle(vertices)
@@ -542,20 +513,43 @@ class Feature(DataObj):
     elif n == 2:
       v = vertices
       geomType = "POINT"
+      braces = ")"
     else:
       v = vertices
-    sql = "SELECT ST_GeomFromText('" + geomType + "(("
+    sql = "SELECT ST_GeomFromText('" + geomType + "("
     i = 0
     while i < n:
       if i > 0:
         sql += ','
       sql += str(v[i]) + " " + str(v[i+1])
       i += 2
-    sql += "))',4326)"
+    sql += braces + "',4326)"
+    # print sql
     return self.oneFeatureResult(sql)
 
+  def polygonGeomFromCircle(self, refPts, radius):
+    pts = str(refPts[0]) + ' ' + str(refPts[1])
+    sql = "SELECT ST_Buffer(ST_GeomFromText('POINT(" + pts + ")', 4326)," + str(radius) + ", 8)"
+    #print sql
+    result = self.db.execute(sql)
+    if not result:
+      return False
+    dbRow = self.db.getNextRow()
+    return dbRow[0]
+
+  def polygonTextFromCircle(self, refPts, radius):
+    pts = str(refPts[0]) + ' ' + str(refPts[1])
+    sql = "SELECT ST_AsText(ST_Transform(ST_Buffer((ST_Transform(ST_GeomFromText('POINT(" + pts + ")', 4326), 3857)), " + \
+          str(radius) + "), 4326) )"
+    #print sql
+    result = self.db.execute(sql)
+    if not result:
+      return False
+    dbRow = self.db.getNextRow()
+    return dbRow[0]
+
   def geomFromText(self, text):
-    sql = "SELECT ST_GeomFromText('" + text + "')"
+    sql = "SELECT ST_GeomFromText('" + text + "', 4326)"
     return self.oneFeatureResult(sql)
 
   def geomFromTextTransformed(self, text, fromSRID, toSRID):
@@ -603,7 +597,6 @@ class Feature(DataObj):
 
 # ==============================================================================
 # Utilities
-
 
 def polygonVerticesFromRectangle(refPoints):
   return [refPoints[0], refPoints[1], refPoints[0], refPoints[3], \

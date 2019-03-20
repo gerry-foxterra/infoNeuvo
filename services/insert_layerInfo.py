@@ -21,7 +21,7 @@ timeNow = str(datetime.datetime.now())[0:19]
 logging.info("Start " + timeNow + " =====================================")
 
 parms = json.load(sys.stdin)
-#parms = {u'appName': u'Infosight', u'authCode': u'glp1547068989.42', u'userID': u'1', u'sortID': u'3030', u'objName': u'Apartments:2 bedroom', u'uniqueID': u'0', u'metadata': u'{"color":[0,0,0,0.3],"text":"2 Bedroom","image":"images/blueDot12.png","visible":"true","heatMap":false,"filters":false,"owner":"","locale":"","cssClass":"selectLine","open":false,"id":"","select":false,"group":"Apartments","min":0,"source":"spatial/2Bedroom.json","type":"static","format":"GeoJSON","URL":"","max":"99","legend":"glp.jpg","geometry":"point","imagerySet":"GLP"}'}
+#parms = {u'appName': u'Infosight', u'authCode': u'glp1553103419.68', u'userID': u'1', u'sortID': u'1200', u'objName': u'Topo:Historic', u'uniqueID': u'0', u'published': u'Y', u'metadata': u'{"color":"0,0,0,2","text":"Historic Topo","image":"","visible":"false","heatMap":false,"filters":false,"owner":"","locale":"","cssClass":"selectLine","open":false,"select":false,"pop_up":"","zindex":"105","source":"ESRI","minZoom":0,"type":"dynamic","opacity":1,"attribution":"","format":"tileLayer","URL":"https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer","legend":"","geometry":"polygon","imagerySet":"","maxZoom":9999999}'}
 logging.info(str(parms))
 
 o = LayerInfo()

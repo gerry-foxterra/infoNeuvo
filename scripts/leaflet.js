@@ -4396,7 +4396,7 @@
       var openGroup = false;
       var lblID = "lbl:" + t.layer.objName;
       var lblClass = group == "Basemap" ? "noGroup" : "foxgroup inGroup";
-      if (group != currentGroup && currentGroup != "") {
+      if (group != currentGroup && currentGroup != "" && group != "Placeholder") {
         lblClass = "foxgroup openGroup";
         openGroup = true;
       }
@@ -4410,17 +4410,23 @@
         n.appendChild(spn);
       }
       var inputID = "chk:" + t.layer.objName;
-      t.overlay ? (i = e.createElement("input"), i.type = "checkbox", i.id = inputID, i.className = "leaflet-control-layers-selector", i.defaultChecked = s) : i = this._createRadioElement("leaflet-base-layers", s), i.layerId = o.stamp(t.layer), o.DomEvent.on(i, "click", this._onInputClick, this);
+      var className = group === "Placeholder" ? "hidden" : "leaflet-control-layers-selector"
+      t.overlay ? (i = e.createElement("input"), i.type = "checkbox", i.id = inputID, i.className = className, i.defaultChecked = s) : i = this._createRadioElement("leaflet-base-layers", s), i.layerId = o.stamp(t.layer), o.DomEvent.on(i, "click", this._onInputClick, this);
       var r = e.createElement("span");
       r.innerHTML = " " + t.name;
       var a = e.createElement("div");
-      // a.className = lblClass;
       n.appendChild(a), a.appendChild(i), a.appendChild(r);
       // GLP - if selectable add <div> and insert radio input control.
       if (t.layer.selectable) {
         z = e.createElement("div"), z.className="foxMapSelect";
-        z.innerHTML = "<input type='radio' class='leaflet-control-layers-selector-rt' name='leaflet-select-layers' id='" + t.layer.objName + "' value='" + t.layer.objName + "' title='Set as select layer'>";
+        var radioTitle = group == "Placeholder" ? "Remove layer selectability" : "Set as select layer";
+        var radioChecked = group == "Placeholder" ? " checked='checked'" : "";
+        z.innerHTML = "<input type='radio' class='leaflet-control-layers-selector-rt' name='leaflet-select-layers' id='" + t.layer.objName + "' value='" + t.layer.objName + "' title='" + radioTitle + "'" + radioChecked + ">";
         a.appendChild(z);
+        if (group == "Placeholder") {
+          line = e.createElement("div"), line.className = "leaflet-control-layers-separator";
+          a.appendChild(line);
+        }
       }
       var h = t.overlay ? this._overlaysList : this._baseLayersList;
       return h.appendChild(n), this._checkDisabledLayers(), n

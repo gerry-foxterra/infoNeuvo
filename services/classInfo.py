@@ -26,15 +26,16 @@ class ClassInfoData(DataObj):
     self.appName = None
     self.metadata = {}            # information for handling a this object
     self.sortID = 0
+    self.published = 'Y'
 
     self._id = "uniqueID"
-    self._baseSql = "SELECT uniqueid, objname, appname, metadata, sortid FROM " + \
+    self._baseSql = "SELECT uniqueid, objname, appname, metadata, sortid, published FROM " + \
                     self._tableName
     if db is None:
       db = Database(False, "metadata")
     super(ClassInfoData, self).__init__(self._id, self._tableName, self._baseSql, self.populate, db)
 
-    self._order = ('uniqueID','findID','objName','group','id','appName','sortID','metadata')
+    self._order = ('uniqueID','findID','objName','group','id','appName','sortID','metadata','published')
     self._grid = {}
     self._grid['uniqueID'] = {'title':'uniqueID','format':'{:d}','visible':'false','width':'20', 'csv':'true', 'quoted':'false'}
     self._grid['findID'] = {'title':'Find','format':'<img id=\'{}\' src=\'images/editMe.png\' onclick=\'editClassInfo(this)\'>',\
@@ -44,22 +45,30 @@ class ClassInfoData(DataObj):
     self._grid['id'] = {'title':'ID','format':'{}','visible':'true','width':'30', 'csv':'true', 'quoted':'true'}
     self._grid['classID'] = {'title':'Class ID','format':'{:d}','visible':'true','width':'44', 'csv':'true', 'quoted':'false'}
     self._grid['appName'] = {'title':'Application Name','format':'{}','visible':'true','width':'40', 'csv':'true', 'quoted':'true'}
-    self._grid['metadata'] = {'title':'Metadata','format':'{json}','visible':'true','width':'100', 'csv':'true', 'quoted':'true'}
+    self._grid['metadata'] = {'title':'Metadata','format':'{json}','visible':'false','width':'100', 'csv':'true', 'quoted':'true'}
     self._grid['sortID'] = {'title': 'Sort ID','format':'{:d}','visible':'true','width':'30', 'csv':'true', 'quoted':'false'}
+    self._grid['published'] = {'title':'Published?','format':'{}','visible':'true','width':'20', 'csv':'true', 'quoted':'false'}
     self.resetFilters()
 
   def resetFilters(self):
       self._filterAppName = None
+      self._filterPublished = None
       self._firstTime = True
 
   def filterAppName(self, theAppName):
     self._filterAppName = theClassID
 
+  def filterIsPublished(self, isPublished):
+    self._filterPublished = isPublished
+
   def applyFilters(self): #PRIVATE method
       if not self._firstTime:
           return
       if self._filterAppName is not None:
-        where = "A.appname='" + str(self._filterAppName) + "'"
+        where = "appname='" + str(self._filterAppName) + "'"
+        self.sqlFilters(where)
+      if self._filterPublished is not None:
+        where = "published='" + self._filterPublished + "'"
         self.sqlFilters(where)
 
   def populate(self, result):
@@ -84,6 +93,9 @@ class ClassInfoData(DataObj):
       self.metadata = self.setDefaultAttributes(self._defaults, jNone(result[i]))
       i += 1
       self.sortID = iNone(result[i])
+      i += 1
+      self.published = sNone(result[i])
+      i += 1
       self._lastIndex = i
 
   def setDefaultAttributes(self, defaults, jsn):
@@ -124,7 +136,7 @@ class ClassInfoData(DataObj):
   def insert(self):
     sql = "INSERT INTO " + self._tableName + " VALUES( DEFAULT,'" + self.objName + \
           "','" + self.appName +  "','" + json.dumps(self.metadata) + "'," + \
-          str(self.sortID) + ") RETURNING uniqueID"
+          str(self.sortID) + ",'" + self.published + "') RETURNING uniqueID"
     if self.db.execute(sql):
         self.uniqueID = self.db.results[0][0]
         return True
@@ -139,7 +151,7 @@ class LayerInfo(ClassInfoData):
     super(LayerInfo, self).__init__(db)
 
     # All attribute metadata for display and editing
-    self._editOrder = [ 'uniqueID', 'objName', 'group', 'id', 'appName', \
+    self._editOrder = [ 'uniqueID', 'objName', 'published', 'group', 'id', 'appName', \
                         'sortID', 'metadata', 'userID', 'authCode']
     self._attributes = {\
       '_defaults': { 'tagType':'input', 'dataType':'str', \
@@ -155,6 +167,7 @@ class LayerInfo(ClassInfoData):
       'appName': { 'label':'App Name'}, \
       'metadata': { 'dataType':'json', 'label':'Metadata', 'disabled':True}, \
       'sortID': { 'label':'Legend Sort ID', 'dataType':'int'}, \
+      "published":{"label":"Published?", "dataType":"str", "tagType":"select","options":[{"text":"Yes","value":"Y"},{"text":"No","value":"N"},{"text":"Testing","value":"T"}]}
     }
 
     # Metadata for grid retrieval and display
@@ -178,16 +191,14 @@ class LayerInfo(ClassInfoData):
 
     # objName is in the form "layerGroup:layer".  eg. "RentalProperties:CurrentListings"
 
-class ReportInfo(ClassInfoData):
+class ReportInfo():
   """
   Attributes for a single report.
   """
   def __init__(self, db=None):
-    self._tableName = "reports"
-    super(ReportInfo, self).__init__(db)
-    self._defaults = {'name':'', 'title':'', 'owner':''}
-    self._format = {'name':'str', 'title':'str', 'owner':'str'}
-    self._options = {}
-    self._grid['findID'] = {'title':'Find','format':'<img id=\'{}\' src=\'images/editMe.png\' onclick=\'editReportInfo(this)\'>',\
-               'visible':'true','width':'20', 'css':'centerLink', 'csv':'false', 'quoted':'true'}
-
+    self.reports = {
+      #'major_projects_closest':{'text':'Closest Major Projects', 'owner':'', 'service':'report_closest_majorProjects.py', 'checked':''},
+      #'overview': {'text':'Overview Report', 'owner':'', 'service':'report_overview.py', 'checked':''},
+      'population': {'text':'Population Report', 'owner':'', 'service':'report_statscan_population.py', 'checked':''},
+      'age_range': {'text':'Age Range Report', 'owner':'', 'service':'report_statscan_ageRange.py', 'checked':''}
+    }
