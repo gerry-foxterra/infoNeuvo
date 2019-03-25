@@ -369,6 +369,7 @@ function instantiateLayer(layers, layerKey) {
       gLayerCount--;
       break;
     case "feedJSON":
+      gLayerCount--;
       break;
     case "geoJSON":
       if (layer.geometry == "point") {
@@ -378,7 +379,6 @@ function instantiateLayer(layers, layerKey) {
       }
       break;
     case "tileLayer":
-      var parms = ;
       if (layer.source == "ESRI") {
         oneLayer = L.esri.tiledMapLayer({ url: layer.URL });
       }
@@ -387,7 +387,27 @@ function instantiateLayer(layers, layerKey) {
       }
       gLayerCount--;
       break;
+    case "DML":   // ESRI Dynamic Map Layer
+      if (layer.source == "ESRI") {
+        //L.esri.dynamicMapLayer({
+        //  url: layer.URL,
+        //  opacity: layer.opacity}).addTo(map);
+        oneLayer = L.esri.dynamicMapLayer({
+          url: layer.URL,
+          opacity: layer.opacity});
+      }
+      gLayerCount--;
+      break;
+    case "image":
+      if (layer.source == "ESRI") {
+        oneLayer = L.esri.imageMapLayer({
+          url: layer.URL,
+          attribution: layer.attribution });
+      }
+      gLayerCount--;
+      break;
     default:
+      gLayerCount--;
       break;
   }
   if (layer.format != "geoJSON") {

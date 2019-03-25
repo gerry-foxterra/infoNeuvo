@@ -62,20 +62,21 @@ function openCloseGroup(what) {
 function initializeGroups() {
   // Close all groups that don't have visible layers
   var isOpened = {};
-  var i=0;
   $("div.foxgroup").each(function() {
     var checkVal = $(this).find("input:checkbox").attr("checked");
+    if (checkVal == null)
+      checkVal = "";
     var isChecked = checkVal === "checked" ? true : false;
-    var id = $(this).find("input:checkbox").attr("id");
+    var id = $(this).attr("id");
     var group = id.split(':')[1];
     if (isOpened.hasOwnProperty(group)) {
       if (isChecked)
         isOpened[group] = true;
     }
-    else
+    else {
       if (group != "Placeholder")
         isOpened[group] = isChecked;
-    i += 1;
+    }
   });
   for (key in isOpened) {
     if (!isOpened[key]) {
